@@ -1,6 +1,6 @@
 ## Sports-events Management
 
-**Designed and developed by:** Emanuel Pimentel, Justin Huang, My "Chiffon" Nguyen
+**Designed and developed by:** Emanuel Pimentel, My "Chiffon" Nguyen
 
 🔗 Link to deployed app:
 
