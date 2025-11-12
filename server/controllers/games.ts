@@ -1,14 +1,15 @@
-import { Request, Response } from 'express'
-import { pool } from '../config/database.js'
-import type { CreateGameInput, UpdateGameInput, GameFilters } from '../types/types.js'
+import { Request, Response } from "express"
+
+import { pool } from "../config/database.js"
+import type { CreateGameInput, GameFilters, UpdateGameInput } from "../types/types.js"
 
 // Get all games with optional filters
 export const getGames = async (req: Request, res: Response): Promise<void> => {
   try {
     const { sport_type, location, date, has_spots } = req.query as GameFilters
 
-    let query = 'SELECT * FROM games WHERE 1=1'
-    const params: any[] = []
+    let query = "SELECT * FROM games WHERE 1=1"
+    const params: (string | number | boolean)[] = []
     let paramCount = 1
 
     if (sport_type) {
@@ -29,17 +30,17 @@ export const getGames = async (req: Request, res: Response): Promise<void> => {
       paramCount++
     }
 
-    if (has_spots === 'true' || has_spots === true) {
-      query += ' AND current_capacity < max_capacity'
+    if (has_spots === "true" || has_spots === true) {
+      query += " AND current_capacity < max_capacity"
     }
 
-    query += ' ORDER BY date ASC, time ASC'
+    query += " ORDER BY date ASC, time ASC"
 
     const result = await pool.query(query, params)
     res.status(200).json(result.rows)
   } catch (error) {
-    console.error('Error fetching games:', error)
-    res.status(500).json({ error: 'Failed to fetch games' })
+    console.error("Error fetching games:", error)
+    res.status(500).json({ error: "Failed to fetch games" })
   }
 }
 
@@ -47,35 +48,44 @@ export const getGames = async (req: Request, res: Response): Promise<void> => {
 export const getGame = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params
-    const result = await pool.query('SELECT * FROM games WHERE id = $1', [id])
+    const result = await pool.query("SELECT * FROM games WHERE id = $1", [id])
 
     if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Game not found' })
+      res.status(404).json({ error: "Game not found" })
       return
     }
 
     res.status(200).json(result.rows[0])
   } catch (error) {
-    console.error('Error fetching game:', error)
-    res.status(500).json({ error: 'Failed to fetch game' })
+    console.error("Error fetching game:", error)
+    res.status(500).json({ error: "Failed to fetch game" })
   }
 }
 
 // Create a new game
 export const createGame = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { title, sport_type, location, date, time, max_capacity, description, organizer_id }: CreateGameInput = req.body
+    const {
+      title,
+      sport_type,
+      location,
+      date,
+      time,
+      max_capacity,
+      description,
+      organizer_id
+    }: CreateGameInput = req.body
 
     // Validate required fields
     if (!title || !sport_type || !location || !date || !time || !max_capacity) {
-      res.status(400).json({ error: 'Missing required fields' })
+      res.status(400).json({ error: "Missing required fields" })
       return
     }
 
     // Validate date is in the future
     const gameDate = new Date(`${date}T${time}`)
     if (gameDate <= new Date()) {
-      res.status(400).json({ error: 'Game date must be in the future' })
+      res.status(400).json({ error: "Game date must be in the future" })
       return
     }
 
@@ -88,8 +98,8 @@ export const createGame = async (req: Request, res: Response): Promise<void> => 
 
     res.status(201).json(result.rows[0])
   } catch (error) {
-    console.error('Error creating game:', error)
-    res.status(500).json({ error: 'Failed to create game' })
+    console.error("Error creating game:", error)
+    res.status(500).json({ error: "Failed to create game" })
   }
 }
 
@@ -97,11 +107,12 @@ export const createGame = async (req: Request, res: Response): Promise<void> => 
 export const updateGame = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params
-    const { title, sport_type, location, date, time, max_capacity, description }: UpdateGameInput = req.body
+    const { title, sport_type, location, date, time, max_capacity, description }: UpdateGameInput =
+      req.body
 
     // Build dynamic update query
     const updates: string[] = []
-    const params: any[] = []
+    const params: (string | number)[] = []
     let paramCount = 1
 
     if (title !== undefined) {
@@ -147,25 +158,25 @@ export const updateGame = async (req: Request, res: Response): Promise<void> => 
     }
 
     if (updates.length === 0) {
-      res.status(400).json({ error: 'No fields to update' })
+      res.status(400).json({ error: "No fields to update" })
       return
     }
 
     updates.push(`updated_at = CURRENT_TIMESTAMP`)
     params.push(id)
 
-    const query = `UPDATE games SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`
+    const query = `UPDATE games SET ${updates.join(", ")} WHERE id = $${paramCount} RETURNING *`
     const result = await pool.query(query, params)
 
     if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Game not found' })
+      res.status(404).json({ error: "Game not found" })
       return
     }
 
     res.status(200).json(result.rows[0])
   } catch (error) {
-    console.error('Error updating game:', error)
-    res.status(500).json({ error: 'Failed to update game' })
+    console.error("Error updating game:", error)
+    res.status(500).json({ error: "Failed to update game" })
   }
 }
 
@@ -175,19 +186,19 @@ export const deleteGame = async (req: Request, res: Response): Promise<void> => 
     const { id } = req.params
 
     // First delete all RSVPs for this game
-    await pool.query('DELETE FROM rsvps WHERE game_id = $1', [id])
+    await pool.query("DELETE FROM rsvps WHERE game_id = $1", [id])
 
     // Then delete the game
-    const result = await pool.query('DELETE FROM games WHERE id = $1 RETURNING *', [id])
+    const result = await pool.query("DELETE FROM games WHERE id = $1 RETURNING *", [id])
 
     if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Game not found' })
+      res.status(404).json({ error: "Game not found" })
       return
     }
 
-    res.status(200).json({ message: 'Game deleted successfully', game: result.rows[0] })
+    res.status(200).json({ message: "Game deleted successfully", game: result.rows[0] })
   } catch (error) {
-    console.error('Error deleting game:', error)
-    res.status(500).json({ error: 'Failed to delete game' })
+    console.error("Error deleting game:", error)
+    res.status(500).json({ error: "Failed to delete game" })
   }
 }

@@ -25,8 +25,8 @@ We met for an hour to discuss the project together. We agreed on themes, app ide
 
 ### 2. What were some challenges your group faced in this unit?
 
-It took some time to figure out how to best collaborate on the project. This week, we wanted to both
-agree on important things and divide work efficiently, so we decided to use HackMD for collaborative writing in Markdown.
+It took some time to figure out how to best collaborate on the project. This week, we wanted to both agree on important things and divide work efficiently, so we decided to use HackMD for collaborative writing in Markdown.
 
 ### 3. What additional support will you need in upcoming units as you continue to work on your final project?
+
 Not right now. We will ask our TF on Slack if anything arises.

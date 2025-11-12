@@ -1,5 +1,3 @@
-
-
 # Entity Relationship Diagram
 
 Reference the Creating an Entity Relationship Diagram final project guide in the course portal for more information about how to complete this deliverable.
@@ -12,7 +10,7 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 
 See the schema below:
 
-```sql    
+```sql
 -- Users Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -75,7 +73,7 @@ CREATE TRIGGER update_games_updated_at BEFORE UPDATE ON games
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_rsvps_updated_at BEFORE UPDATE ON rsvps
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column(); 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 ```
 
 ## Add the Entity Relationship Diagram
@@ -85,7 +83,7 @@ erDiagram
     USERS ||--o{ GAMES : organizes
     USERS ||--o{ RSVPS : creates
     GAMES ||--o{ RSVPS : receives
-    
+
     USERS {
         int id PK
         varchar email UK
@@ -94,7 +92,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     GAMES {
         int id PK
         int organizer_id FK
@@ -107,7 +105,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     RSVPS {
         int id PK
         int game_id FK
@@ -117,4 +115,3 @@ erDiagram
         timestamp updated_at
     }
 ```
-    

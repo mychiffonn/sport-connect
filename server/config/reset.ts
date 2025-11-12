@@ -1,7 +1,8 @@
-import { pool } from './database.js'
-import { readFile } from 'fs/promises'
-import { fileURLToPath } from 'url'
-import path from 'path'
+import { readFile } from "fs/promises"
+import path from "path"
+import { fileURLToPath } from "url"
+
+import { pool } from "./database.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -100,13 +101,13 @@ interface RSVP {
 
 async function loadSeedData() {
   try {
-    const usersPath = path.join(__dirname, '../data/users.json')
-    const gamesPath = path.join(__dirname, '../data/games.json')
-    const rsvpsPath = path.join(__dirname, '../data/rsvps.json')
+    const usersPath = path.join(__dirname, "../data/users.json")
+    const gamesPath = path.join(__dirname, "../data/games.json")
+    const rsvpsPath = path.join(__dirname, "../data/rsvps.json")
 
-    const usersData = await readFile(usersPath, 'utf-8')
-    const gamesData = await readFile(gamesPath, 'utf-8')
-    const rsvpsData = await readFile(rsvpsPath, 'utf-8')
+    const usersData = await readFile(usersPath, "utf-8")
+    const gamesData = await readFile(gamesPath, "utf-8")
+    const rsvpsData = await readFile(rsvpsPath, "utf-8")
 
     return {
       users: JSON.parse(usersData) as User[],
@@ -114,7 +115,7 @@ async function loadSeedData() {
       rsvps: JSON.parse(rsvpsData) as RSVP[]
     }
   } catch (error) {
-    console.error('❌ Error loading seed data:', error)
+    console.error("❌ Error loading seed data:", error)
     throw error
   }
 }
@@ -161,22 +162,22 @@ async function seedDatabase(users: User[], games: Game[], rsvps: RSVP[]) {
 
 async function reset() {
   try {
-    console.log('🗑️  Dropping existing tables...')
-    console.log('🏗️  Creating tables...')
+    console.log("🗑️  Dropping existing tables...")
+    console.log("🏗️  Creating tables...")
     await pool.query(createTablesQuery)
-    console.log('✅ Tables created successfully')
+    console.log("✅ Tables created successfully")
 
-    console.log('📖 Loading seed data...')
+    console.log("📖 Loading seed data...")
     const { users, games, rsvps } = await loadSeedData()
 
-    console.log('🌱 Seeding database...')
+    console.log("🌱 Seeding database...")
     await seedDatabase(users, games, rsvps)
-    console.log('✅ Database seeded successfully')
+    console.log("✅ Database seeded successfully")
 
     await pool.end()
     process.exit(0)
   } catch (error) {
-    console.error('❌ Error resetting database:', error)
+    console.error("❌ Error resetting database:", error)
     await pool.end()
     process.exit(1)
   }

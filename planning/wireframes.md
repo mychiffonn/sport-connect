@@ -5,15 +5,15 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 ## List of Pages
 
 - / (homepage) ⭐
-    - Allow users to sign up and sign in
-    - Show all the events
-    - Filter: sport type, location, date, event with spots left 
+  - Allow users to sign up and sign in
+  - Show all the events
+  - Filter: sport type, location, date, event with spots left
 - /eventId (with event detail) ⭐
-    - Can RSVP from here. Will have more detailed information about events compared to the homepage. 
+  - Can RSVP from here. Will have more detailed information about events compared to the homepage.
 - /events
-    - When user is logged in, they see all events they RSVP
+  - When user is logged in, they see all events they RSVP
 - /new ⭐
-    - Allows organizers to create events
+  - Allows organizers to create events
 - /signup
 - /signin
 

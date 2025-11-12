@@ -32,5 +32,5 @@
     }
   },
   "include": ["server/**/*.ts"],
-  "exclude": ["node_modules", "server/dist", "server/data"]
+  "exclude": ["server/dist", "server/data"]
 }

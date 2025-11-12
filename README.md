@@ -8,15 +8,11 @@
 
 ### Description and Purpose
 
-This web application will allow users to set up and organize their own recreational sport events
-at their community parks. The purpose of this is to make it easier for people to get together
-and enjoy some outdoor time.
+This web application will allow users to set up and organize their own recreational sport events at their community parks. The purpose of this is to make it easier for people to get together and enjoy some outdoor time.
 
 ### Inspiration
 
-For many, trying to make new friends in your area can be difficult, especially when it comes to finding a shared hobby
-or interest. With this website, users can now host weekly or daily events that brings everyone together through recreational sports, making finding
-friends and being active easier.
+For many, trying to make new friends in your area can be difficult, especially when it comes to finding a shared hobby or interest. With this website, users can now host weekly or daily events that brings everyone together through recreational sports, making finding friends and being active easier.
 
 ## Tech Stack
 

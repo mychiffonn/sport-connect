@@ -26,4 +26,4 @@ We had some challenges with creating the UI design for this initial stage, as we
 
 ### 3. What additional support will you need in upcoming units as you continue to work on your final project?
 
-Since we only have two group members, we may fall into a few challenges when implementing the project. 
+Since we only have two group members, we may fall into a few challenges when implementing the project.

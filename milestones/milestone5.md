@@ -59,7 +59,7 @@ Complete the checklist below detailing each baseline, custom, and stretch featur
 - [ ] The user can filter or sort items based on particular criteria as appropriate for your use case
 - [ ] Data is automatically generated in response to a certain event or user action. Examples include generating a default inventory for a new user starting a game or creating a starter set of tasks for a user creating a new task app account
 - [ ] Data submitted via a POST or PATCH request is validated before the database is updated (e.g. validating that an event is in the future before allowing a new event to be created)
-  - [ ] *To receive full credit, please be sure to demonstrate in your walkthrough that for certain inputs, the item will NOT be successfully created or updated.*
+  - [ ] _To receive full credit, please be sure to demonstrate in your walkthrough that for certain inputs, the item will NOT be successfully created or updated._
 
 ### Stretch Features
 
@@ -71,11 +71,11 @@ Complete the checklist below detailing each baseline, custom, and stretch featur
 - [ ] Show a spinner while a page or page element is loading
 - [ ] Disable buttons and inputs during the form submission process
 - [ ] Disable buttons after they have been clicked
-  - *At least 75% of buttons in your app must exhibit this behavior to receive full credit*
+  - _At least 75% of buttons in your app must exhibit this behavior to receive full credit_
 - [ ] Users can upload images to the app and have them be stored on a cloud service
-  - *A user profile picture does **NOT** count for this rubric item **only if** the app also includes "Login via GitHub" functionality.*
-  - *Adding a photo via a URL does **NOT** count for this rubric item (for example, if the user provides a URL with an image to attach it to the post).*
-  - *Selecting a photo from a list of provided photos does **NOT** count for this rubric item.*
+  - _A user profile picture does **NOT** count for this rubric item **only if** the app also includes "Login via GitHub" functionality._
+  - _Adding a photo via a URL does **NOT** count for this rubric item (for example, if the user provides a URL with an image to attach it to the post)._
+  - _Selecting a photo from a list of provided photos does **NOT** count for this rubric item._
 - [ ] 🍞 [Toast messages](https://www.patternfly.org/v3/pattern-library/communication/toast-notifications/index.html) deliver simple feedback in response to user events
 
 ## Final Demo GIF
