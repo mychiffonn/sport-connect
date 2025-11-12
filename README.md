@@ -1,8 +1,22 @@
-## Sports-events Management
+# ⚽ Sport Connect
+
+**A community platform for organizing and joining recreational sports events**
 
 **Designed and developed by:** Emanuel Pimentel, My "Chiffon" Nguyen
 
-🔗 Link to deployed app:
+🔗 **Deployed App:** Coming soon!
+
+---
+
+## 📑 Table of Contents
+
+- [About](#about)
+- [Features](#features)
+- [Installation Instructions](#installation-instructions)
+- [Available Scripts](#available-scripts)
+- [Recommended Project Structure](#recommended-project-structure)
+
+---
 
 ## About
 
@@ -13,14 +27,6 @@ This web application will allow users to set up and organize their own recreatio
 ### Inspiration
 
 For many, trying to make new friends in your area can be difficult, especially when it comes to finding a shared hobby or interest. With this website, users can now host weekly or daily events that brings everyone together through recreational sports, making finding friends and being active easier.
-
-## Tech Stack
-
-Frontend: React, TailwindCSS, daisyUI, shadcn/ui
-
-Backend: Express, PostgreSQL
-
-Deploy: Render
 
 ## Features
 
@@ -101,15 +107,13 @@ This is a custom feature for: Data submitted via a POST or PATCH request is vali
    pnpm install
    ```
 
-3. Configure environment variables
-
-   Create a `.env` file in the root directory (use `.env.example` as template):
+3. Create a `.env` file in the root directory and fill in environment variables
 
    ```bash
    cp .env.example .env
    ```
 
-4. **Initialize the database**
+4. Initialize the database:
 
    ```bash
    pnpm reset
@@ -186,3 +190,17 @@ sport-connect/
 - **TypeScript Project References**: Root tsconfig with client/server separation
 - **Path Aliases**: `@/` for client imports (e.g., `import { foo } from '@/components'`)
 - **ESM Everything**: All configs use modern ES modules
+
+## Tech Stack
+
+### Frontend
+
+![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.17-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white) ![DaisyUI](https://img.shields.io/badge/DaisyUI-5.5.0-5A0EF8?style=for-the-badge&logo=daisyui&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-7.2.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+
+### Backend
+
+![Express](https://img.shields.io/badge/Express-4.21.2-000000?style=for-the-badge&logo=express&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-24.8.0-339933?style=for-the-badge&logo=node.js&logoColor=white)
+
+### Development Tools
+
+![ESLint](https://img.shields.io/badge/ESLint-9.39.1-4B32C3?style=for-the-badge&logo=eslint&logoColor=white) ![Prettier](https://img.shields.io/badge/Prettier-3.6.2-F7B93E?style=for-the-badge&logo=prettier&logoColor=black) ![pnpm](https://img.shields.io/badge/pnpm-10.21.0-F69220?style=for-the-badge&logo=pnpm&logoColor=white)
