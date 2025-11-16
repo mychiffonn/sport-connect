@@ -1,15 +1,21 @@
 import { Request, Response } from "express"
 
 import { pool } from "../config/database.js"
-import type { CreateRSVPInput, UpdateRSVPInput } from "../types/types.js"
+import type { CreateRSVPInput, UpdateRSVPInput } from "../types.js"
+
+// import { P } from "node_modules/better-auth/dist/shared/better-auth.BUpnjBGu.js"
 
 // Get all RSVPs for a game
 export const getRSVPsForGame = async (req: Request, res: Response): Promise<void> => {
   try {
     const { gameId } = req.params
-
+    // join with users table to get user details as well
     const result = await pool.query(
-      "SELECT * FROM rsvps WHERE game_id = $1 ORDER BY created_at ASC",
+      `SELECT r.*, u.name as user_name, u.email as user_email
+       FROM rsvps r
+       JOIN users u ON r.user_id = u.id
+       WHERE r.game_id = $1
+       ORDER BY r.created_at ASC`,
       [gameId]
     )
 
@@ -24,11 +30,19 @@ export const getRSVPsForGame = async (req: Request, res: Response): Promise<void
 export const createRSVP = async (req: Request, res: Response): Promise<void> => {
   try {
     const { gameId } = req.params
-    const { user_name, user_email }: CreateRSVPInput = req.body
+    // expects user id from above instead
+    const { user_id }: CreateRSVPInput = req.body
 
     // Validate required fields
-    if (!user_name) {
-      res.status(400).json({ error: "User name is required" })
+    if (!user_id) {
+      res.status(400).json({ error: "User ID is required" })
+      return
+    }
+
+    // validation - check if user exists in database
+    const userResult = await pool.query("SELECT * FROM users WHERE id = $1", [user_id])
+    if (userResult.rows.length === 0) {
+      res.status(404).json({ error: "User not found " })
       return
     }
 
@@ -55,12 +69,24 @@ export const createRSVP = async (req: Request, res: Response): Promise<void> => 
       return
     }
 
+    // validation - prevent duplicate RSVPs
+    const existingRSVP = await pool.query(
+      "SELECT * FROM rsvps WHERE game_id = $1 AND user_id = $2",
+      [gameId, user_id]
+    )
+
+    if (existingRSVP.rows.length > 0) {
+      res.status(400).json({ error: "User already RSVP'd to this game" })
+      return
+    }
+
     // Create RSVP
+    // update: uses user_id instead now
     const rsvpResult = await pool.query(
-      `INSERT INTO rsvps (game_id, user_name, user_email, status)
-       VALUES ($1, $2, $3, 'confirmed')
+      `INSERT INTO rsvps (game_id, user_id, status)
+       VALUES ($1, $2, 'confirmed')
        RETURNING *`,
-      [gameId, user_name, user_email]
+      [gameId, user_id]
     )
 
     // Update game current_capacity
