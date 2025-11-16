@@ -6,11 +6,22 @@ import type { CreateGameInput, GameFilters, UpdateGameInput } from "../types.js"
 // Get all games with optional filters
 export const getGames = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { sport_type, location, date, has_spots } = req.query as GameFilters
+    const { sport_type, location, date, has_spots, search, sort } = req.query as GameFilters
 
     let query = "SELECT * FROM games WHERE 1=1"
     const params: (string | number | boolean)[] = []
     let paramCount = 1
+
+    // search filter
+    if (search) {
+      query += ` AND (
+      title ILIKE $${paramCount} OR
+      description ILIKE $${paramCount} OR
+      location ILIKE $${paramCount}
+      )`
+      params.push(`%${search}%`)
+      paramCount++
+    }
 
     if (sport_type) {
       query += ` AND sport_type = $${paramCount}`
@@ -34,7 +45,23 @@ export const getGames = async (req: Request, res: Response): Promise<void> => {
       query += " AND current_capacity < max_capacity"
     }
 
-    query += " ORDER BY date ASC, time ASC"
+    let orderBy = " ORDER BY date ASC, time ASC"
+
+    if (sort === "date-asc") {
+      orderBy = "ORDER BY date ASC, time ASC"
+    } else if (sort === "date-desc") {
+      orderBy = "ORDER BY date DESC, time DESC"
+    } else if (sort === "spots-desc") {
+      orderBy = "ORDER BY (max_capacity - current_capacity) DESC"
+    } else if (sort === "spots-asc") {
+      orderBy = "ORDER BY (max_capacity - current_capacity) ASC"
+    } else if (sort === "newest") {
+      orderBy = "ORDER BY created_at DESC"
+    } else if (sort === "oldest") {
+      orderBy = "ORDER BY created_at ASC"
+    }
+
+    query += ` ${orderBy}`
 
     const result = await pool.query(query, params)
     res.status(200).json(result.rows)

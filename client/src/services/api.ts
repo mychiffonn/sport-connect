@@ -10,12 +10,16 @@ export const api = {
     location?: string
     date?: string
     has_spots?: boolean
+    search?: string
+    sort?: string
   }): Promise<Game[]> {
     const params = new URLSearchParams()
     if (filters?.sport_type) params.append("sport_type", filters.sport_type)
     if (filters?.location) params.append("location", filters.location)
     if (filters?.date) params.append("date", filters.date)
     if (filters?.has_spots !== undefined) params.append("has_spots", String(filters.has_spots))
+    if (filters?.search) params.append("search", filters.search)
+    if (filters?.sort) params.append("sort", filters.sort)
 
     const url = `${API_BASE_URL}/games${params.toString() ? `?${params.toString()}` : ""}`
     const response = await fetch(url)

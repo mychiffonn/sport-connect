@@ -84,5 +84,7 @@ export interface GameFilters {
   location?: string
   date?: string
   has_spots?: string | boolean
+  search?: string
+  sort?: string
   organizer_id?: number
 }

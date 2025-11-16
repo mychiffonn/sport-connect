@@ -12,6 +12,8 @@ export function GameList() {
     location?: string
     date?: string
     has_spots?: boolean
+    search?: string
+    sort?: string
   }>({})
 
   // fetch games when component mounts
