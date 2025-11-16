@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react"
 import { api, type Game } from "../services/api"
 import { GameCard } from "./GameCard"
+import { FilterBar } from "./FilterBar"
 
 export function GameList() {
   const [games, setGames] = useState<Game[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<{
+    sport_type?: string
+    location?: string
+    date?: string
+    has_spots?: boolean
+  }>({})
 
   // fetch games when component mounts
   useEffect(() => {
     const fetchGames = async () => {
       try {
         setLoading(true)
-        const data = await api.getGames()
+        const data = await api.getGames(filters)
         setGames(data)
         setError(null)
       } catch (err) {
@@ -23,7 +30,12 @@ export function GameList() {
       }
     }
     fetchGames()
-  }, [])
+  }, [filters])
+
+  // handle filter changes
+  const handleFilterChange = (newFilters: typeof filters) => {
+    setFilters(newFilters)
+  }
 
   // loading state
   if (loading) {
@@ -52,12 +64,24 @@ export function GameList() {
     )
   }
 
-  // games grid
   return (
-    <div className="lg:grid-cols3 grid grid-cols-1 gap-6 md:grid-cols-2">
-      {games.map((game) => (
-        <GameCard key={game.id} game={game} />
-      ))}
+    <div>
+      {/* Filter Bar */}
+      <FilterBar onFilterChange={handleFilterChange} />
+
+      {/* Empty state */}
+      {games.length === 0 ? (
+        <div className="alert alert-info">
+          <span>No games found matching your filters. Try adjusting your search!</span>
+        </div>
+      ) : (
+        /* Games grid */
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {games.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
