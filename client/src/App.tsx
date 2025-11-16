@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { GameList } from "./components/GameList"
 
 function App() {
   return (
@@ -18,10 +19,14 @@ function App() {
 function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-6 text-4xl font-bold">Sport Connect</h1>
-      <p className="text-lg">
-        Welcome to Sport Connect - Find and organize recreational sports events!
-      </p>
+      <div className="mb-8">
+        <h1 className="mb-2 text-4xl font-bold">Sports Connect</h1>
+        <p className="text-lg opacity-70">
+          Find and join recreational sports evens in your community
+        </p>
+      </div>
+
+      <GameList />
     </div>
   )
 }
