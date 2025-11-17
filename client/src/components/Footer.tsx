@@ -1,4 +1,4 @@
-export function Footer() {
+function Footer() {
   return (
     <footer className="footer footer-center bg-base-300 text-base-content mt-auto p-4">
       <aside>
@@ -7,3 +7,5 @@ export function Footer() {
     </footer>
   )
 }
+
+export default Footer

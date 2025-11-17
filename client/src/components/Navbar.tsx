@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 
-export function Navbar() {
+function Navbar() {
   const navigate = useNavigate()
   const isLoggedIn = true // TODO: verify with auth context later
   const userName = "John Doe"
@@ -71,3 +71,5 @@ export function Navbar() {
     </nav>
   )
 }
+
+export default Navbar

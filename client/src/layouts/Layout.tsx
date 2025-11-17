@@ -1,11 +1,11 @@
-import { Navbar } from "./Navbar"
-import { Footer } from "./Footer"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 interface LayoutProps {
   children: React.ReactNode
 }
 
-export function Layout({ children }: LayoutProps) {
+function Layout({ children }: LayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -14,3 +14,5 @@ export function Layout({ children }: LayoutProps) {
     </div>
   )
 }
+
+export default Layout
