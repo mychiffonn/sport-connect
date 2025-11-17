@@ -1,12 +1,28 @@
 import express from "express"
 
-import { createGame, deleteGame, getGame, getGames, updateGame } from "../controllers/games.js"
+import {
+  createGame,
+  deleteGame,
+  getGame,
+  getGames,
+  getUserHostedGames,
+  getUserPastGames,
+  getUserPastHostedGames,
+  getUserRSVPGames,
+  updateGame
+} from "../controllers/games.js"
 
-const router = express.Router()
+const router: express.Router = express.Router()
 
-// Games routes
 router.get("/", getGames)
+
+router.get("/user/:userId/hosted", getUserHostedGames)
+router.get("/user/:userId/rsvps", getUserRSVPGames)
+router.get("/user/:userId/past", getUserPastGames)
+router.get("/user/:userId/past-hosted", getUserPastHostedGames)
+
 router.get("/:id", getGame)
+
 router.post("/", createGame)
 router.patch("/:id", updateGame)
 router.delete("/:id", deleteGame)

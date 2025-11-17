@@ -25,7 +25,8 @@
     /* Path aliases (optional for future use) */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./client/src/*"]
+      "@/*": ["./client/src/*"],
+      "@server/*": ["./server/*"]
     }
   },
   "include": ["client/src"],

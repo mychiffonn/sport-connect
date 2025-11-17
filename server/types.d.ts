@@ -24,32 +24,36 @@ export interface UpdateUserInput {
 export interface Game {
   id: number
   organizer_id: number
-  sport: string
+  title: string
+  sport_type: string
   location: string
-  date: string
-  time: string
-  capacity: number
-  description: string
+  scheduled_at: string
+  timezone: string
+  max_capacity: number
+  current_capacity: number
+  description?: string
   created_at: string
   updated_at: string
 }
 
 export interface CreateGameInput {
   organizer_id: number
-  sport: string
+  title: string
+  sport_type: string
   location: string
-  date: string
-  time: string
-  capacity: number
-  description: string
+  scheduled_at: string
+  timezone: string
+  max_capacity: number
+  description?: string
 }
 
 export interface UpdateGameInput {
-  sport?: string
+  title?: string
+  sport_type?: string
   location?: string
-  date?: string
-  time?: string
-  capacity?: number
+  scheduled_at?: string
+  timezone?: string
+  max_capacity?: number
   description?: string
 }
 
@@ -58,8 +62,11 @@ export interface RSVP {
   id: number
   game_id: number
   user_id: number
+  status: "confirmed" | "waitlisted" | "rejected"
   created_at: string
   updated_at: string
+  user_name?: string
+  user_email?: string
 }
 
 export interface CreateRSVPInput {
@@ -67,10 +74,18 @@ export interface CreateRSVPInput {
   user_id: number
 }
 
+export interface UpdateRSVPInput {
+  status: "confirmed" | "waitlisted" | "rejected"
+}
+
 // Query filters
 export interface GameFilters {
-  sport?: string
+  sport_type?: string
   location?: string
-  date?: string
+  date_start?: string
+  date_end?: string
+  has_spots?: string | boolean
+  search?: string
+  sort?: string
   organizer_id?: number
 }
