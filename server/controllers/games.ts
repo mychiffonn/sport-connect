@@ -6,7 +6,8 @@ import type { CreateGameInput, GameFilters, UpdateGameInput } from "../types.js"
 // Get all games with optional filters
 export const getGames = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { sport_type, location, date, has_spots, search, sort } = req.query as GameFilters
+    const { sport_type, location, date_start, date_end, has_spots, search, sort } =
+      req.query as GameFilters
 
     let query = "SELECT * FROM games WHERE 1=1"
     const params: (string | number | boolean)[] = []
@@ -35,9 +36,15 @@ export const getGames = async (req: Request, res: Response): Promise<void> => {
       paramCount++
     }
 
-    if (date) {
-      query += ` AND date = $${paramCount}`
-      params.push(date)
+    if (date_start) {
+      query += ` AND date >= $${paramCount}`
+      params.push(date_start)
+      paramCount++
+    }
+
+    if (date_end) {
+      query += ` AND date <= $${paramCount}`
+      params.push(date_end)
       paramCount++
     }
 
@@ -227,5 +234,85 @@ export const deleteGame = async (req: Request, res: Response): Promise<void> => 
   } catch (error) {
     console.error("Error deleting game:", error)
     res.status(500).json({ error: "Failed to delete game" })
+  }
+}
+
+export const getUserHostedGames = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params
+
+    const result = await pool.query(
+      `SELECT * FROM games
+       WHERE organizer_id = $1
+       AND (date || ' ' || time)::timestamp > NOW()
+       ORDER BY date ASC, time ASC`,
+      [userId]
+    )
+
+    res.status(200).json(result.rows)
+  } catch (error) {
+    console.error("Error fetching user's hosted games:", error)
+    res.status(500).json({ error: "Failed to fetch hosted games " })
+  }
+}
+
+export const getUserRSVPGames = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params
+
+    const result = await pool.query(
+      `SELECT g.*, r.id as rsvp_id, r.status as rsvp_status
+       FROM games g
+       JOIN rsvps r ON g.id = r.game_id
+       WHERE r.user_id = $1
+       AND (g.date || ' ' || g.time)::timestamp > NOW()
+       ORDER BY g.date ASC, g.time ASC`,
+      [userId]
+    )
+
+    res.status(200).json(result.rows)
+  } catch (error) {
+    console.error("Error fetching user's RSVP'd games:", error)
+    res.status(500).json({ error: "Failed to fetch RSVP'd games" })
+  }
+}
+
+export const getUserPastGames = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params
+
+    const result = await pool.query(
+      `SELECT g.*, r.id as rsvp_id, r.status as rsvp_status
+       FROM games g
+       JOIN rsvps r ON g.id = r.game_id
+       WHERE r.user_id = $1 
+       AND (g.date || ' ' || g.time)::timestamp <= NOW()
+       ORDER BY g.date DESC, g.time DESC`,
+      [userId]
+    )
+
+    res.status(200).json(result.rows)
+  } catch (error) {
+    console.error("Error fetching user's past games:", error)
+    res.status(500).json({ error: "Failed to fetch past games" })
+  }
+}
+
+export const getUserPastHostedGames = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params
+
+    const result = await pool.query(
+      `SELECT * FROM games
+       WHERE organizer_id = $1 
+       AND (date || ' ' || time)::timestamp <= NOW()
+       ORDER BY date DESC, time DESC`,
+      [userId]
+    )
+
+    res.status(200).json(result.rows)
+  } catch (error) {
+    console.error("Error fetching user's past hosted games:", error)
+    res.status(500).json({ error: "Failed to fetch past hosted games" })
   }
 }

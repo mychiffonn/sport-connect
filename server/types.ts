@@ -82,7 +82,8 @@ export interface UpdateRSVPInput {
 export interface GameFilters {
   sport_type?: string
   location?: string
-  date?: string
+  date_start?: string
+  date_end?: string
   has_spots?: string | boolean
   search?: string
   sort?: string

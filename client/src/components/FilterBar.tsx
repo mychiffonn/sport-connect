@@ -1,32 +1,64 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface FilterBarProps {
-  onFilterChange: (filteres: {
+  onFilterChange: (filters: {
     sport_type?: string
     location?: string
-    date?: string
+    date_start?: string
+    date_end?: string
     has_spots?: boolean
     search?: string
     sort?: string
   }) => void
+  initialFilters?: {
+    sport_type?: string
+    location?: string
+    date_start?: string
+    date_end?: string
+    has_spots?: boolean
+    search?: string
+    sort?: string
+  }
 }
 
-export function FilterBar({ onFilterChange }: FilterBarProps) {
-  const [sortValue, setSortValue] = useState("date-asc")
+export function FilterBar({ onFilterChange, initialFilters = {} }: FilterBarProps) {
+  const [sportType, setSportType] = useState(initialFilters.sport_type || "")
+  const [location, setLocation] = useState(initialFilters.location || "")
+  const [dateStart, setDateStart] = useState(initialFilters.date_start || "")
+  const [dateEnd, setDateEnd] = useState(initialFilters.date_end || "")
+  const [hasSpots, setHasSpots] = useState(initialFilters.has_spots || false)
+  const [search, setSearch] = useState(initialFilters.search || "")
+  const [sortValue, setSortValue] = useState(initialFilters.sort || "date-asc")
+
+  useEffect(() => {
+    setSportType(initialFilters.sport_type || "")
+    setLocation(initialFilters.location || "")
+    setDateStart(initialFilters.date_start || "")
+    setDateEnd(initialFilters.date_end || "")
+    setHasSpots(initialFilters.has_spots || false)
+    setSearch(initialFilters.search || "")
+    setSortValue(initialFilters.sort || "date-asc")
+  }, [initialFilters])
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+
+    if (dateStart && dateEnd && dateStart > dateEnd) {
+      alert("Start date cannot be after end date")
+      return
+    }
 
     const filters = {
-      sport_type: (formData.get("sport_type") as string) || undefined,
-      location: (formData.get("location") as string) || undefined,
-      date: (formData.get("date") as string) || undefined,
-      has_spots: formData.get("has_spots") === "on" ? true : undefined,
-      search: (formData.get("search") as string) || undefined,
+      sport_type: sportType || undefined,
+      location: location || undefined,
+      date_start: dateStart || undefined,
+      date_end: dateEnd || undefined,
+      has_spots: hasSpots ? true : undefined,
+      search: search || undefined,
       sort: sortValue
     }
 
-    // remove empty values
+    // Remove empty values
     Object.keys(filters).forEach(
       (key) =>
         filters[key as keyof typeof filters] === undefined &&
@@ -37,10 +69,28 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
   }
 
   const handleReset = () => {
+    setSportType("")
+    setLocation("")
+    setDateStart("")
+    setDateEnd("")
+    setHasSpots(false)
+    setSearch("")
     setSortValue("date-asc")
+
+    // Clear filters
     onFilterChange({})
-    const form = document.querySelector("form") as HTMLFormElement
-    form?.reset()
+  }
+
+  const getActiveFilterCount = () => {
+    let count = 0
+    if (sportType) count++
+    if (location) count++
+    if (dateStart) count++
+    if (dateEnd) count++
+    if (hasSpots) count++
+    if (search) count++
+    // don't count sort as it always has a value (default: date-asc)
+    return count
   }
 
   return (
@@ -57,12 +107,14 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
             <input
               type="text"
               name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by title, description, or location..."
               className="input input-bordered w-full"
             />
           </div>
 
-          {/* sort dropdown*/}
+          {/* Sort Dropdown */}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Sort By</span>
@@ -89,11 +141,17 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
               <label className="label">
                 <span className="label-text">Sport</span>
               </label>
-              <select name="sport_type" className="select select-bordered w-full">
+              <select
+                name="sport_type"
+                className="select select-bordered w-full"
+                value={sportType}
+                onChange={(e) => setSportType(e.target.value)}
+              >
                 <option value="">All Sports</option>
                 <option value="Basketball">Basketball</option>
                 <option value="Soccer">Soccer</option>
                 <option value="Tennis">Tennis</option>
+                <option value="Table Tennis">Table Tennis</option>
                 <option value="Volleyball">Volleyball</option>
                 <option value="Badminton">Badminton</option>
                 <option value="Baseball">Baseball</option>
@@ -109,17 +167,40 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
               <input
                 type="text"
                 name="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 placeholder="Filter by city..."
                 className="input input-bordered w-full"
               />
             </div>
 
-            {/* Date Filter */}
+            {/* date Range Filter */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Date</span>
+                <span className="label-text">Date From</span>
               </label>
-              <input type="date" name="date" className="input input-bordered w-full" />
+              <input
+                type="date"
+                name="date_start"
+                value={dateStart}
+                onChange={(e) => setDateStart(e.target.value)}
+                max={dateEnd || undefined}
+                className="input input-bordered w-full"
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Date To</span>
+              </label>
+              <input
+                type="date"
+                name="date_end"
+                value={dateEnd}
+                onChange={(e) => setDateEnd(e.target.value)}
+                min={dateStart || undefined}
+                className="input input-bordered w-full"
+              />
             </div>
 
             {/* Available Spots Filter */}
@@ -129,7 +210,13 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
               </label>
               <div className="flex h-12 items-center">
                 <label className="label cursor-pointer gap-2 p-0">
-                  <input type="checkbox" name="has_spots" className="checkbox checkbox-primary" />
+                  <input
+                    type="checkbox"
+                    name="has_spots"
+                    checked={hasSpots}
+                    onChange={(e) => setHasSpots(e.target.checked)}
+                    className="checkbox checkbox-primary"
+                  />
                   <span className="label-text">Has spots</span>
                 </label>
               </div>
@@ -144,8 +231,12 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
                 <button type="button" onClick={handleReset} className="btn btn-ghost btn-sm">
                   Clear
                 </button>
-                <button type="submit" className="btn btn-primary btn-sm">
+                <button type="submit" className="btn btn-primary btn-sm gap-2">
                   Apply
+                  {/*filter cuont badge*/}
+                  {getActiveFilterCount() > 0 && (
+                    <span className="badge badge-secondary">{getActiveFilterCount()}</span>
+                  )}
                 </button>
               </div>
             </div>

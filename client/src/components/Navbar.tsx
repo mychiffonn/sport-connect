@@ -1,26 +1,31 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export function Navbar() {
-  // TODO: this will come from auth context later
-  const isLoggedIn = true // placeholder
-  const userName = "John Doe" // Placeholder
+  const navigate = useNavigate()
+  const isLoggedIn = true // TODO: verify with auth context later
+  const userName = "John Doe"
+
+  // ✏️ ADDED: Handler to clear filters
+  const handleBrowseClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    navigate("/games", { replace: true })
+  }
 
   return (
     <nav className="navbar bg-base-100 px-4 shadow-lg">
       <div className="flex-1">
-        {/* Logo / Site Name */}
         <Link to="/" className="btn btn-ghost text-xl font-bold">
           ⚽ Sport Connect
         </Link>
 
-        {/* Navigation Links */}
         <div className="ml-8 flex gap-2">
           <Link to="/" className="btn btn-ghost">
             Home
           </Link>
-          <Link to="/games" className="btn btn-ghost">
+          {/* ✏️ CHANGED: Use onClick handler */}
+          <button onClick={handleBrowseClick} className="btn btn-ghost">
             Browse Games
-          </Link>
+          </button>
           <Link to="/games/new" className="btn btn-ghost">
             Create Game
           </Link>

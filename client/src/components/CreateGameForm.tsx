@@ -9,52 +9,62 @@ export function CreateGameForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     const formData = new FormData(e.currentTarget)
-    // get values
-    const gameData = {
-      organizer_id: 1, // TODO: this will come from auth context later
+
+    const dateStr = formData.get("date") as string
+    const timeStr = formData.get("time") as string
+
+    const localDateTime = new Date(`${dateStr}T${timeStr}`)
+
+    // Validate date is in the future (using local time)
+    if (localDateTime <= new Date()) {
+      setError("Game date and time must be in the future")
+      return
+    }
+
+    // Convert to UTC for storage
+    const utcDate = localDateTime.toISOString().split("T")[0] // YYYY-MM-DD in UTC
+    const utcTime = localDateTime.toISOString().split("T")[1].slice(0, 8) // HH:MM:SS in UTC
+
+    const newGame = {
       title: formData.get("title") as string,
       sport_type: formData.get("sport_type") as string,
       location: formData.get("location") as string,
-      date: formData.get("date") as string,
-      time: formData.get("time") as string,
-      max_capacity: parseInt(formData.get("max_capacity") as string),
-      description: (formData.get("description") as string)?.trim() || ""
+      date: utcDate, // UTC date
+      time: utcTime, // UTC time
+      max_capacity: Number(formData.get("max_capacity")),
+      description: (formData.get("description") as string) || undefined,
+      organizer_id: 1 // TODO: Replace with actual user ID from auth context
     }
 
-    // validation
+    // Validate required fields
     if (
-      !gameData.title ||
-      !gameData.sport_type ||
-      !gameData.location ||
-      !gameData.date ||
-      !gameData.time ||
-      !gameData.max_capacity
+      !newGame.title ||
+      !newGame.sport_type ||
+      !newGame.location ||
+      !newGame.date ||
+      !newGame.time ||
+      !newGame.max_capacity
     ) {
       setError("Please fill in all required fields")
       return
     }
 
-    if (gameData.max_capacity < 2) {
+    // Validate capacity
+    if (newGame.max_capacity < 2) {
       setError("Capacity must be at least 2 players")
-      return
-    }
-
-    // check future date
-    const gameDataTime = new Date(`${gameData.date}T${gameData.time}`)
-    if (gameDataTime <= new Date()) {
-      setError("Game data and time must be in the future")
       return
     }
 
     try {
       setLoading(true)
       setError(null)
-      const newGame = await api.createGame(gameData)
-      navigate(`/games/${newGame.id}`)
+      const createdGame = await api.createGame(newGame)
+      navigate(`/games/${createdGame.id}`)
     } catch (err) {
       setError("Failed to create game. Please try again.")
-      console.error("Error creating game: ", err)
+      console.error("Error creating game:", err)
     } finally {
       setLoading(false)
     }
@@ -96,6 +106,7 @@ export function CreateGameForm() {
               <option value="Basketball">Basketball</option>
               <option value="Soccer">Soccer</option>
               <option value="Tennis">Tennis</option>
+              <option value="Table Tennis">Table Tennis</option>
               <option value="Volleyball">Volleyball</option>
               <option value="Badminton">Badminton</option>
               <option value="Baseball">Baseball</option>

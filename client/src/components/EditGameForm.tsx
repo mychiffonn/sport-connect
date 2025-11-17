@@ -9,6 +9,8 @@ export function EditGameForm() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [localDate, setLocalDate] = useState("")
+  const [localTime, setLocalTime] = useState("")
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -18,10 +20,25 @@ export function EditGameForm() {
         setLoading(true)
         const gameData = await api.getGame(Number(id))
         setGame(gameData)
+
+        // Convert UTC to local timezone for form display
+        const utcDateTime = new Date(`${gameData.date.split("T")[0]}T${gameData.time}`)
+
+        // Format for date input (YYYY-MM-DD)
+        const year = utcDateTime.getFullYear()
+        const month = String(utcDateTime.getMonth() + 1).padStart(2, "0")
+        const day = String(utcDateTime.getDate()).padStart(2, "0")
+        setLocalDate(`${year}-${month}-${day}`)
+
+        // Format for time input (HH:MM)
+        const hours = String(utcDateTime.getHours()).padStart(2, "0")
+        const minutes = String(utcDateTime.getMinutes()).padStart(2, "0")
+        setLocalTime(`${hours}:${minutes}`)
+
         setError(null)
       } catch (err) {
         setError("Failed to load game")
-        console.error("Error fetching game: ", err)
+        console.error("Error fetching game:", err)
       } finally {
         setLoading(false)
       }
@@ -36,18 +53,35 @@ export function EditGameForm() {
 
     const formData = new FormData(e.currentTarget)
 
-    // updated values
+    //Get local date/time and convert to UTC
+    const dateStr = formData.get("date") as string
+    const timeStr = formData.get("time") as string
+
+    // Create datetime in user's local timezone
+    const localDateTime = new Date(`${dateStr}T${timeStr}`)
+
+    // Validate date is in the future (using local time)
+    if (localDateTime <= new Date()) {
+      setError("Game date and time must be in the future")
+      return
+    }
+
+    // Convert to UTC
+    const utcDate = localDateTime.toISOString().split("T")[0]
+    const utcTime = localDateTime.toISOString().split("T")[1].slice(0, 8)
+
+    // Build updates object
     const updates = {
       title: formData.get("title") as string,
       sport_type: formData.get("sport_type") as string,
       location: formData.get("location") as string,
-      date: formData.get("date") as string,
-      time: formData.get("time") as string,
+      date: utcDate,
+      time: utcTime,
       max_capacity: parseInt(formData.get("max_capacity") as string),
       description: (formData.get("description") as string)?.trim() || ""
     }
 
-    // validation
+    // Validation
     if (
       !updates.title ||
       !updates.sport_type ||
@@ -65,14 +99,7 @@ export function EditGameForm() {
       return
     }
 
-    // set in future check
-    const gameDateTime = new Date(`${updates.date}T${updates.time}`)
-    if (gameDateTime <= new Date()) {
-      setError("Game date and time must be in the future")
-      return
-    }
-
-    // capacity check
+    // Capacity check
     if (updates.max_capacity < game.current_capacity) {
       setError(`Cannot reduce capacity below current RSVPs (${game.current_capacity})`)
       return
@@ -82,7 +109,6 @@ export function EditGameForm() {
       setSaving(true)
       setError(null)
       await api.updateGame(Number(id), updates)
-      // redirect back to game detail page
       navigate(`/games/${id}`)
     } catch (err) {
       setError("Failed to update game. Please try again.")
@@ -158,6 +184,7 @@ export function EditGameForm() {
               <option value="Basketball">Basketball</option>
               <option value="Soccer">Soccer</option>
               <option value="Tennis">Tennis</option>
+              <option value="Table Tennis">Table Tennis</option>
               <option value="Volleyball">Volleyball</option>
               <option value="Badminton">Badminton</option>
               <option value="Baseball">Baseball</option>
@@ -181,9 +208,7 @@ export function EditGameForm() {
             />
           </div>
 
-          {/* Date and Time Row */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* Date */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Date *</span>
@@ -191,13 +216,12 @@ export function EditGameForm() {
               <input
                 type="date"
                 name="date"
-                defaultValue={game.date.split("T")[0]}
+                defaultValue={localDate}
                 className="input input-bordered w-full"
                 required
               />
             </div>
 
-            {/* Time */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Time *</span>
@@ -205,7 +229,7 @@ export function EditGameForm() {
               <input
                 type="time"
                 name="time"
-                defaultValue={game.time}
+                defaultValue={localTime}
                 className="input input-bordered w-full"
                 required
               />
@@ -222,7 +246,7 @@ export function EditGameForm() {
               name="max_capacity"
               defaultValue={game.max_capacity}
               placeholder="e.g., 10"
-              min={game.current_capacity} // Can't go below current RSVPs
+              min={game.current_capacity}
               className="input input-bordered w-full"
               required
             />

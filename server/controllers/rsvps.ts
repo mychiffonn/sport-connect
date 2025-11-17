@@ -63,9 +63,25 @@ export const createRSVP = async (req: Request, res: Response): Promise<void> => 
     }
 
     // Check if game date is in the future
-    const gameDate = new Date(`${game.date}T${game.time}`)
-    if (gameDate <= new Date()) {
-      res.status(400).json({ error: "Cannot RSVP to a past game" })
+    const gameDate =
+      typeof game.date === "string"
+        ? game.date.split("T")[0]
+        : game.date.toISOString().split("T")[0]
+    const gameDateTime = new Date(`${gameDate}T${game.time}`)
+    const now = new Date()
+
+    // debug
+    console.log("Game datetime:", gameDateTime)
+    console.log("Current time:", now)
+    console.log("Is past?", gameDateTime <= now)
+
+    if (gameDateTime <= now) {
+      const [year, month, day] = gameDate.split("-")
+      const formattedDate = `${month}/${day}/${year}`
+      res.status(400).json({
+        error: `This game was scheduled for ${formattedDate} at ${game.time} and has already begun or passed.
+        `
+      })
       return
     }
 

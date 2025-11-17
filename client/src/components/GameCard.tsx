@@ -3,11 +3,13 @@ import { Link } from "react-router-dom"
 
 interface GameCardProps {
   game: Game
+  currentUserId?: number
 }
 
-export function GameCard({ game }: GameCardProps) {
+export function GameCard({ game, currentUserId }: GameCardProps) {
   // date formatting
   const formatDate = (dateString: string) => {
+    // the date comes as a UTC string, convert to local
     const date = new Date(dateString)
     return date.toLocaleDateString("en-US", {
       weekday: "short",
@@ -16,26 +18,35 @@ export function GameCard({ game }: GameCardProps) {
     })
   }
 
-  // same with time
   const formatTime = (timeString: string) => {
-    const [hours, minutes] = timeString.split(":")
-    const hour = parseInt(hours)
-    const ampm = hour >= 12 ? "PM" : "AM"
-    const displayHour = hour % 12 || 12
-    return `${displayHour}:${minutes} ${ampm}`
+    // add 'Z' to indicate UTC, then convert to local
+    const dateTime = new Date(`${game.date.split("T")[0]}T${timeString}Z`)
+
+    return dateTime.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true
+    })
   }
 
   // calc spots remaning
   const spotsRemaining = game.max_capacity - game.current_capacity
   const isFull = spotsRemaining === 0
 
+  const isOrganizer = currentUserId && game.organizer_id === currentUserId
+
   return (
     <div className="card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl">
       <div className="card-body">
         {/*title and sports title*/}
+        {/*title and sports title*/}
+        {/*title and sports title*/}
         <h2 className="card-title">
-          {game.title}
-          <div className="badge badge-secondary">{game.sport_type}</div>
+          <span className="flex-1 truncate">{game.title}</span>
+          <div className="badge badge-secondary whitespace-nowrap">{game.sport_type}</div>
+          {isOrganizer && (
+            <div className="badge badge-accent whitespace-nowrap">You're Hosting</div>
+          )}
         </h2>
         {/* location */}
         <p className="text-sm opacity-70">{game.location}</p>
@@ -59,18 +70,15 @@ export function GameCard({ game }: GameCardProps) {
             </span>
           </div>
           <progress
-            className={`progress ${isFull} ? 'progress-error' : 'progress-success'} w-full`}
+            className={`progress ${isFull ? "progress-error" : "progress-success"} w-full`}
             value={game.current_capacity}
             max={game.max_capacity}
           />
         </div>
         {/*actions*/}
         <div className="card-actions mt-4 justify-end">
-          <Link
-            to={`/games/${game.id}`}
-            className={`btn b nt-primary btn-sm ${isFull ? "btn-disabled" : ""}`}
-          >
-            {isFull ? "Full" : "View Details"}
+          <Link to={`/games/${game.id}`} className="btn btn-primary btn-sm">
+            {isFull ? "Full - View Details" : "View Details"}
           </Link>
         </div>
       </div>

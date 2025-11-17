@@ -8,7 +8,8 @@ export const api = {
   async getGames(filters?: {
     sport_type?: string
     location?: string
-    date?: string
+    date_start?: string
+    date_end?: string
     has_spots?: boolean
     search?: string
     sort?: string
@@ -16,7 +17,8 @@ export const api = {
     const params = new URLSearchParams()
     if (filters?.sport_type) params.append("sport_type", filters.sport_type)
     if (filters?.location) params.append("location", filters.location)
-    if (filters?.date) params.append("date", filters.date)
+    if (filters?.date_start) params.append("date_start", filters.date_start)
+    if (filters?.date_end) params.append("date_end", filters.date_end)
     if (filters?.has_spots !== undefined) params.append("has_spots", String(filters.has_spots))
     if (filters?.search) params.append("search", filters.search)
     if (filters?.sort) params.append("sort", filters.sort)
@@ -73,14 +75,17 @@ export const api = {
     return response.json()
   },
 
-  // dreate an RSVP
+  // create an RSVP
   async createRSVP(gameId: number, userId: number): Promise<RSVP> {
     const response = await fetch(`${API_BASE_URL}/games/${gameId}/rsvps`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId })
     })
-    if (!response.ok) throw new Error("Failed to create RSVP")
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Failed to create RSVP")
+    }
     return response.json()
   },
 
@@ -90,6 +95,29 @@ export const api = {
       method: "DELETE"
     })
     if (!response.ok) throw new Error("Failed to delete RSVP")
+  },
+
+  async getUserHostedGames(userId: number): Promise<Game[]> {
+    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/hosted`)
+    if (!response.ok) throw new Error("Failed to fetch hosted games")
+    return response.json()
+  },
+
+  async getUserRSVPGames(userId: number): Promise<Game[]> {
+    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/rsvps`)
+    if (!response.ok) throw new Error("Failed to fetch RSVP'd games")
+    return response.json()
+  },
+
+  async getUserPastGames(userId: number): Promise<Game[]> {
+    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/past`)
+    if (!response.ok) throw new Error("Failed to fetch past games")
+    return response.json()
+  },
+  async getUserPastHostedGames(userId: number): Promise<Game[]> {
+    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/past-hosted`)
+    if (!response.ok) throw new Error("Failed to fetch past hosted games")
+    return response.json()
   }
 }
 
