@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { SPORT_TYPES } from "@/constants/sports"
 
 interface FilterBarProps {
