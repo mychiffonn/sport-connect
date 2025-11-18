@@ -1,6 +1,7 @@
-import type { Game } from "@/services/api"
 import { Link } from "react-router-dom"
-import { formatShortDate, formatGameTime, getUserTimezone } from "@/utils/format-date"
+
+import type { Game } from "@/services/api"
+import FormattedDatetime from "@/components/FormattedDatetime"
 
 interface GameCardProps {
   game: Game
@@ -13,7 +14,6 @@ function GameCard({ game, currentUserId }: GameCardProps) {
   const isFull = spotsRemaining === 0
 
   const isOrganizer = currentUserId && game.organizer_id === currentUserId
-  const userTimezone = getUserTimezone()
 
   return (
     <div className="card bg-base-100 transition-shadow hover:shadow-lg">
@@ -29,10 +29,7 @@ function GameCard({ game, currentUserId }: GameCardProps) {
         <p className="text-sm opacity-70">{game.location}</p>
 
         {/*date and time*/}
-        <p className="text-sm">
-          {formatShortDate(game.scheduled_at, userTimezone)} at{" "}
-          {formatGameTime(game.scheduled_at, userTimezone)}
-        </p>
+        <FormattedDatetime datetime={game.scheduled_at} variant="short" className="text-sm" />
 
         {/* description*/}
         {game.description && <p className="mt-2 text-sm">{game.description}</p>}

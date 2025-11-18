@@ -68,7 +68,7 @@ Users can RSVP to an event they see, given the availability
 
 ### Update RSVP status
 
-The owner can let others know whether they've been confirmed, wailisted, or rejected
+The user can update their RSVP status for an event they have already RSVP'd to. Options: "Going", "Maybe", "Not Going"
 
 [gif goes here]
 

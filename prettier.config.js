@@ -28,6 +28,7 @@ export default {
   importOrder: [
     "<BUILTIN_MODULES>",
     "",
+    "(.*)react(.*)",
     "<THIRD_PARTY_MODULES>",
     "",
     "^@server/(.*)$",
@@ -43,7 +44,7 @@ export default {
     "^[./]",
     ".css$"
   ],
-  importOrderParserPlugins: ["typescript", "tsx", "decorators-legacy"],
+  importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
   overrides: [
     {
       files: "*.md",

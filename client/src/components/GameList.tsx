@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
-import { api, type Game } from "../services/api"
 import { useSearchParams } from "react-router-dom"
-import GameCard from "./GameCard"
+
+import { api, type Game } from "../services/api"
 import FilterBar from "./FilterBar"
+import GameCard from "./GameCard"
 
 export function GameList() {
   const [searchParams, setSearchParams] = useSearchParams()

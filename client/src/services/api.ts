@@ -1,5 +1,4 @@
-// types imported from the server
-import type { Game, RSVP } from "../../../server/types.js"
+import type { Game, RSVP } from "@server/types"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api"
 
@@ -89,6 +88,20 @@ export const api = {
     return response.json()
   },
 
+  // update an RSVP status
+  async updateRSVP(rsvpId: number, status: "going" | "maybe" | "not_going"): Promise<RSVP> {
+    const response = await fetch(`${API_BASE_URL}/rsvps/${rsvpId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status })
+    })
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Failed to update RSVP")
+    }
+    return response.json()
+  },
+
   // delete an RSVP
   async deleteRSVP(rsvpId: number): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/rsvps/${rsvpId}`, {
@@ -97,29 +110,36 @@ export const api = {
     if (!response.ok) throw new Error("Failed to delete RSVP")
   },
 
+  async getUser(
+    userId: number
+  ): Promise<{ id: number; name: string; email: string; created_at: string }> {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`)
+    if (!response.ok) throw new Error("Failed to fetch user")
+    return response.json()
+  },
+
   async getUserHostedGames(userId: number): Promise<Game[]> {
-    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/hosted`)
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/hosted`)
     if (!response.ok) throw new Error("Failed to fetch hosted games")
     return response.json()
   },
 
   async getUserRSVPGames(userId: number): Promise<Game[]> {
-    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/rsvps`)
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/rsvps`)
     if (!response.ok) throw new Error("Failed to fetch RSVP'd games")
     return response.json()
   },
 
   async getUserPastGames(userId: number): Promise<Game[]> {
-    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/past`)
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/past`)
     if (!response.ok) throw new Error("Failed to fetch past games")
     return response.json()
   },
   async getUserPastHostedGames(userId: number): Promise<Game[]> {
-    const response = await fetch(`${API_BASE_URL}/games/user/${userId}/past-hosted`)
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/past-hosted`)
     if (!response.ok) throw new Error("Failed to fetch past hosted games")
     return response.json()
   }
 }
 
-// re-export
 export type { Game, RSVP }

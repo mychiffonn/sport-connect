@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { SPORT_TYPES } from "@/constants/sports"
+import { getUserTimezone } from "@/utils/format-date"
+
 import { api, type Game } from "@/services/api"
 
 function EditGameForm() {
@@ -21,18 +24,18 @@ function EditGameForm() {
         const gameData = await api.getGame(Number(id))
         setGame(gameData)
 
-        // Convert UTC to local timezone for form display
-        const utcDateTime = new Date(`${gameData.date.split("T")[0]}T${gameData.time}`)
+        // Parse scheduled_at (backend returns Date object or ISO string)
+        const scheduledDate = new Date(gameData.scheduled_at)
 
         // Format for date input (YYYY-MM-DD)
-        const year = utcDateTime.getFullYear()
-        const month = String(utcDateTime.getMonth() + 1).padStart(2, "0")
-        const day = String(utcDateTime.getDate()).padStart(2, "0")
+        const year = scheduledDate.getFullYear()
+        const month = String(scheduledDate.getMonth() + 1).padStart(2, "0")
+        const day = String(scheduledDate.getDate()).padStart(2, "0")
         setLocalDate(`${year}-${month}-${day}`)
 
         // Format for time input (HH:MM)
-        const hours = String(utcDateTime.getHours()).padStart(2, "0")
-        const minutes = String(utcDateTime.getMinutes()).padStart(2, "0")
+        const hours = String(scheduledDate.getHours()).padStart(2, "0")
+        const minutes = String(scheduledDate.getMinutes()).padStart(2, "0")
         setLocalTime(`${hours}:${minutes}`)
 
         setError(null)
@@ -53,30 +56,29 @@ function EditGameForm() {
 
     const formData = new FormData(e.currentTarget)
 
-    //Get local date/time and convert to UTC
     const dateStr = formData.get("date") as string
     const timeStr = formData.get("time") as string
 
-    // Create datetime in user's local timezone
-    const localDateTime = new Date(`${dateStr}T${timeStr}`)
+    // Get user's timezone
+    const timezone = getUserTimezone()
 
     // Validate date is in the future (using local time)
+    const localDateTime = new Date(`${dateStr}T${timeStr}`)
     if (localDateTime <= new Date()) {
       setError("Game date and time must be in the future")
       return
     }
 
-    // Convert to UTC
-    const utcDate = localDateTime.toISOString().split("T")[0]
-    const utcTime = localDateTime.toISOString().split("T")[1].slice(0, 8)
+    // Combine date and time into ISO timestamp format
+    const scheduled_at = `${dateStr}T${timeStr}:00`
 
     // Build updates object
     const updates = {
       title: formData.get("title") as string,
       sport_type: formData.get("sport_type") as string,
       location: formData.get("location") as string,
-      date: utcDate,
-      time: utcTime,
+      scheduled_at: scheduled_at, // ISO timestamp
+      timezone: timezone, // User's timezone for display
       max_capacity: parseInt(formData.get("max_capacity") as string),
       description: (formData.get("description") as string)?.trim() || ""
     }
@@ -86,8 +88,8 @@ function EditGameForm() {
       !updates.title ||
       !updates.sport_type ||
       !updates.location ||
-      !updates.date ||
-      !updates.time ||
+      !updates.scheduled_at ||
+      !updates.timezone ||
       !updates.max_capacity
     ) {
       setError("Please fill in all required fields")
@@ -181,14 +183,11 @@ function EditGameForm() {
               required
             >
               <option value="">Select a sport</option>
-              <option value="Basketball">Basketball</option>
-              <option value="Soccer">Soccer</option>
-              <option value="Tennis">Tennis</option>
-              <option value="Table Tennis">Table Tennis</option>
-              <option value="Volleyball">Volleyball</option>
-              <option value="Badminton">Badminton</option>
-              <option value="Baseball">Baseball</option>
-              <option value="Football">Football</option>
+              {SPORT_TYPES.map((sport) => (
+                <option key={sport} value={sport}>
+                  {sport}
+                </option>
+              ))}
               <option value="Other">Other</option>
             </select>
           </div>

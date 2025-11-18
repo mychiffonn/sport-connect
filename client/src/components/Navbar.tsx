@@ -12,38 +12,42 @@ function Navbar() {
   }
 
   return (
-    <nav className="navbar bg-base-100 px-4 shadow-lg">
+    <nav className="navbar bg-base-100 px-4 shadow-sm">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-xl font-bold">
-          ⚽ Sport Connect
+          ⚽ SportConnect
         </Link>
-
-        <div className="ml-8 flex gap-2">
-          <Link to="/" className="btn btn-ghost">
-            Home
-          </Link>
-          {/* ✏️ CHANGED: Use onClick handler */}
-          <button onClick={handleBrowseClick} className="btn btn-ghost">
-            Browse Games
-          </button>
-          <Link to="/games/new" className="btn btn-ghost">
-            Create Game
-          </Link>
-        </div>
       </div>
 
-      {/* Right side - Profile or Login */}
-      <div className="flex-none">
+      {/* Right side - Nav buttons + Profile */}
+      <div className="flex-none gap-2">
+        <ul className="menu menu-horizontal px-1">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <button onClick={handleBrowseClick}>Browse Games</button>
+          </li>
+          <li>
+            <Link to="/games/new">Create Game</Link>
+          </li>
+        </ul>
+
+        {/* Profile or Login */}
         {isLoggedIn ? (
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-circle btn-ghost avatar avatar-placeholder"
+            >
               <div className="bg-neutral text-neutral-content w-10 rounded-full">
-                <span className="text-xl">{userName.charAt(0)}</span>
+                <span className="text-lg">{userName.charAt(0)}</span>
               </div>
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
               <li className="menu-title">
                 <span>{userName}</span>

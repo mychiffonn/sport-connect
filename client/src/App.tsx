@@ -1,14 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 
-import Layout from "@/layouts/Layout"
-import HomePage from "@/pages/HomePage"
 import BrowseGamesPage from "@/pages/BrowseGamesPage"
-import GameDetailPage from "@/pages/GameDetailPage"
-import EditGamePage from "@/pages/EditGamePage"
 import CreateGamePage from "@/pages/CreateGamePage"
-import ProfilePage from "@/pages/ProfilePage"
+import EditGamePage from "@/pages/EditGamePage"
+import GameDetailPage from "@/pages/GameDetailPage"
+import HomePage from "@/pages/HomePage"
 import MyEventsPage from "@/pages/MyEventsPage"
 import NotFoundPage from "@/pages/NotFoundPage"
+import ProfilePage from "@/pages/ProfilePage"
+import UserProfilePage from "@/pages/UserProfilePage"
+import Layout from "@/layouts/Layout"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/games/new/" element={<CreateGamePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/my-events" element={<MyEventsPage />} />
+          <Route path="/users/:userId" element={<UserProfilePage />} />
           <Route path="*" element={<NotFoundPage />} /> {/*caches all unmatched routes*/}
         </Routes>
       </Layout>
