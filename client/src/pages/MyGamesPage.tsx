@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { useAuth } from "@/contexts/AuthContext"
 
 import { api, type Game } from "@/services/api"
 import GameCard from "@/components/GameCard"
-import PageTransition from "@/components/PageTransition"
 
-function HomePage() {
-  const currentUserId = 1 // TODO replace with real userID from auth
+function MyGamesPage() {
+  const { user } = useAuth()
+  const currentUserId = user?.id
   const [hostedGames, setHostedGames] = useState<Game[]>([])
   const [upcomingGames, setUpcomingGames] = useState<Game[]>([])
   const [pastGames, setPastGames] = useState<Game[]>([])
@@ -14,6 +15,8 @@ function HomePage() {
 
   useEffect(() => {
     const fetchUserGames = async () => {
+      if (!currentUserId) return
+
       try {
         setLoading(true)
         const [hosted, upcoming, pastRSVPs, pastHosted] = await Promise.all([
@@ -39,17 +42,15 @@ function HomePage() {
     }
 
     fetchUserGames()
-  }, [])
+  }, [currentUserId])
 
   if (loading) {
     return (
-      <PageTransition>
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex min-h-[400px] items-center justify-center">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex min-h-[400px] items-center justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
         </div>
-      </PageTransition>
+      </div>
     )
   }
 
@@ -125,4 +126,4 @@ function HomePage() {
   )
 }
 
-export default HomePage
+export default MyGamesPage
