@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
+import { api, type Game } from "@/services/api"
 import GameCard from "@/components/GameCard"
 import PageTransition from "@/components/PageTransition"
-import { api, type Game } from "@/services/api"
 
 function HomePage() {
   const currentUserId = 1 // TODO replace with real userID from auth
@@ -54,76 +54,74 @@ function HomePage() {
   }
 
   return (
-    <PageTransition>
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold">Your Dashboard</h1>
-          <p className="mb-4 text-lg opacity-70">Manage your games and see what's coming up</p>
-          <Link to="/games" className="btn btn-primary">
-            Browse All Games
-          </Link>
-        </div>
-
-        {/* Games You're Hosting */}
-        <section className="mb-10">
-          <h2 className="mb-4 text-2xl font-bold">Games You're Hosting ({hostedGames.length})</h2>
-          {hostedGames.length === 0 ? (
-            <div className="alert alert-info">
-              <span>
-                You haven't created any games yet.{" "}
-                <Link to="/games/new" className="link">
-                  Create one now!
-                </Link>
-              </span>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {hostedGames.map((game) => (
-                <GameCard key={game.id} game={game} currentUserId={currentUserId} />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Upcoming Games (RSVP'd) */}
-        <section className="mb-10">
-          <h2 className="mb-4 text-2xl font-bold">Upcoming Games ({upcomingGames.length})</h2>
-          {upcomingGames.length === 0 ? (
-            <div className="alert alert-info">
-              <span>
-                You haven't RSVP'd to any upcoming games.{" "}
-                <Link to="/games" className="link">
-                  Find a game to join!
-                </Link>
-              </span>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {upcomingGames.map((game) => (
-                <GameCard key={game.id} game={game} currentUserId={currentUserId} />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Past Events */}
-        <section className="mb-10">
-          <h2 className="mb-4 text-2xl font-bold">Past Events ({pastGames.length})</h2>
-          {pastGames.length === 0 ? (
-            <div className="alert alert-info">
-              <span>No past events yet. Join some games to build your history!</span>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {pastGames.map((game) => (
-                <GameCard key={game.id} game={game} currentUserId={currentUserId} />
-              ))}
-            </div>
-          )}
-        </section>
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="mb-2 text-4xl font-bold">Your Dashboard</h1>
+        <p className="mb-4 text-lg opacity-70">Manage your games and see what's coming up</p>
+        <Link to="/games" className="btn btn-primary">
+          Browse All Games
+        </Link>
       </div>
-    </PageTransition>
+
+      {/* Games You're Hosting */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-2xl font-bold">Games You're Hosting ({hostedGames.length})</h2>
+        {hostedGames.length === 0 ? (
+          <div className="alert alert-info">
+            <span>
+              You haven't created any games yet.{" "}
+              <Link to="/games/new" className="link">
+                Create one now!
+              </Link>
+            </span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {hostedGames.map((game) => (
+              <GameCard key={game.id} game={game} currentUserId={currentUserId} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Upcoming Games (RSVP'd) */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-2xl font-bold">Upcoming Games ({upcomingGames.length})</h2>
+        {upcomingGames.length === 0 ? (
+          <div className="alert alert-info">
+            <span>
+              You haven't RSVP'd to any upcoming games.{" "}
+              <Link to="/games" className="link">
+                Find a game to join!
+              </Link>
+            </span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {upcomingGames.map((game) => (
+              <GameCard key={game.id} game={game} currentUserId={currentUserId} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Past Events */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-2xl font-bold">Past Events ({pastGames.length})</h2>
+        {pastGames.length === 0 ? (
+          <div className="alert alert-info">
+            <span>No past events yet. Join some games to build your history!</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {pastGames.map((game) => (
+              <GameCard key={game.id} game={game} currentUserId={currentUserId} />
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
   )
 }
 
