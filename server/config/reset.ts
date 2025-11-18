@@ -2,10 +2,11 @@ import { readFile } from "fs/promises"
 import path from "path"
 import { fileURLToPath } from "url"
 
+import type { Game, RSVP, User } from "../types.js"
 import { pool } from "./database.js"
 
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __data_dir = path.join(path.dirname(__filename), "../data")
 
 // Database schema
 const createTablesQuery = `
@@ -48,7 +49,7 @@ const createTablesQuery = `
     id SERIAL PRIMARY KEY,
     game_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    status VARCHAR(20) DEFAULT 'confirmed' CHECK (status IN ('confirmed', 'waitlisted', 'rejected')),
+    status VARCHAR(20) DEFAULT 'going' CHECK (status IN ('going', 'maybe', 'not_going')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
@@ -83,33 +84,11 @@ const createTablesQuery = `
       FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 `
 
-interface User {
-  email: string
-  name: string
-  password_hash: string
-}
-
-interface Game {
-  organizer_id: number
-  title: string
-  sport_type: string
-  location: string
-  scheduled_at: string
-  timezone: string
-  max_capacity: number
-  description: string
-}
-
-interface RSVP {
-  game_id: number
-  user_id: number
-}
-
 async function loadSeedData() {
   try {
-    const usersPath = path.join(__dirname, "../data/users.json")
-    const gamesPath = path.join(__dirname, "../data/games.json")
-    const rsvpsPath = path.join(__dirname, "../data/rsvps.json")
+    const usersPath = path.join(__data_dir, "users.json")
+    const gamesPath = path.join(__data_dir, "games.json")
+    const rsvpsPath = path.join(__data_dir, "rsvps.json")
 
     const usersData = await readFile(usersPath, "utf-8")
     const gamesData = await readFile(gamesPath, "utf-8")
@@ -159,12 +138,24 @@ async function seedDatabase(users: User[], games: Game[], rsvps: RSVP[]) {
   // Insert RSVPs
   for (const rsvp of rsvps) {
     await pool.query(
-      `INSERT INTO rsvps (game_id, user_id)
-       VALUES ($1, $2)`,
-      [rsvp.game_id, rsvp.user_id]
+      `INSERT INTO rsvps (game_id, user_id, status)
+       VALUES ($1, $2, $3)`,
+      [rsvp.game_id, rsvp.user_id, rsvp.status || "going"]
     )
   }
   console.log(`✅ Inserted ${rsvps.length} RSVPs`)
+
+  // Update game capacities based on 'going' RSVPs
+  await pool.query(`
+    UPDATE games
+    SET current_capacity = (
+      SELECT COUNT(*)
+      FROM rsvps
+      WHERE rsvps.game_id = games.id
+      AND rsvps.status = 'going'
+    )
+  `)
+  console.log(`✅ Updated game capacities`)
 }
 
 async function reset() {

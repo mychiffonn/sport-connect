@@ -2,7 +2,7 @@ import express from "express"
 
 import { createRSVP, deleteRSVP, getRSVPsForGame, updateRSVP } from "../controllers/rsvps.js"
 
-const router = express.Router()
+const router: express.Router = express.Router()
 
 // RSVP routes
 router.get("/games/:gameId/rsvps", getRSVPsForGame)

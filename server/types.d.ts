@@ -1,4 +1,3 @@
-// User types
 export interface User {
   id: number
   email: string
@@ -20,7 +19,6 @@ export interface UpdateUserInput {
   password_hash?: string
 }
 
-// Game/Event types
 export interface Game {
   id: number
   organizer_id: number
@@ -58,15 +56,16 @@ export interface UpdateGameInput {
 }
 
 // RSVP types
+export type RSVPStatus = "going" | "maybe" | "not_going"
+
 export interface RSVP {
   id: number
   game_id: number
   user_id: number
-  status: "confirmed" | "waitlisted" | "rejected"
+  status: RSVPStatus
   created_at: string
   updated_at: string
   user_name?: string
-  user_email?: string
 }
 
 export interface CreateRSVPInput {
@@ -75,7 +74,7 @@ export interface CreateRSVPInput {
 }
 
 export interface UpdateRSVPInput {
-  status: "confirmed" | "waitlisted" | "rejected"
+  status: RSVPStatus
 }
 
 // Query filters
