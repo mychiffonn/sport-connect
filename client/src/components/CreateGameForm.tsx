@@ -1,8 +1,9 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { api } from "@/services/api"
-import { getUserTimezone } from "@/utils/format-date"
 import { SPORT_TYPES } from "@/constants/sports"
+import { getUserTimezone } from "@/utils/format-date"
+
+import { api } from "@/services/api"
 
 export function CreateGameForm() {
   const navigate = useNavigate()

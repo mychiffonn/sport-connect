@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
-import PageTransition from "@/components/PageTransition"
 import { api, type Game, type RSVP } from "@/services/api"
-import { formatLongDate, formatGameTime, getUserTimezone } from "@/utils/format-date"
+import AttendeeList from "@/components/AttendeeList"
+import FormattedDatetime from "@/components/FormattedDatetime"
+import PageTransition from "@/components/PageTransition"
+import RSVPButton from "@/components/RSVPButton"
 
 function GameDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -12,7 +14,6 @@ function GameDetailPage() {
   const [rsvps, setRsvps] = useState<RSVP[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const userTimezone = getUserTimezone()
 
   useEffect(() => {
     const fetchGameDetails = async () => {
@@ -54,54 +55,32 @@ function GameDetailPage() {
     }
   }
 
-  const handleRSVP = async () => {
-    if (!game) return
+  // Handler for optimistic RSVP updates
+  const handleRsvpChange = (updatedRsvp: RSVP | null) => {
+    const currentUserId = 1 // TODO: replace with real user ID from auth
 
-    const currentUserId = 1 // TODO: replace with real user ID from auth request
+    setRsvps((prevRsvps) => {
+      // Remove existing RSVP for this user
+      const filtered = prevRsvps.filter((r) => r.user_id !== currentUserId)
 
-    try {
-      await api.createRSVP(game.id, currentUserId)
+      // Add the new/updated RSVP if it exists
+      if (updatedRsvp) {
+        return [...filtered, updatedRsvp]
+      }
 
-      const [updatedGame, updatedRsvps] = await Promise.all([
-        api.getGame(game.id),
-        api.getRSVPs(game.id)
-      ])
-
-      setGame(updatedGame)
-      setRsvps(updatedRsvps)
-
-      alert("Successfully RSVP'd to the game!")
-    } catch (err) {
-      console.error("Error creating RSVP: ", err)
-      const errorMessage = err instanceof Error ? err.message : "Failed to RSVP"
-      alert(errorMessage)
-    }
+      return filtered
+    })
   }
 
-  const handleCancelRSVP = async (rsvpId: number) => {
-    if (!game) return
-
-    if (!confirm("Are you sure you want to cancel your RSVP?")) {
-      return
-    }
-
-    try {
-      await api.deleteRSVP(rsvpId)
-
-      // Refresh the game data and RSVPs
-      const [updatedGame, updatedRsvps] = await Promise.all([
-        api.getGame(game.id),
-        api.getRSVPs(game.id)
-      ])
-
-      setGame(updatedGame)
-      setRsvps(updatedRsvps)
-
-      alert("RSVP cancelled successfully!")
-    } catch (err) {
-      console.error("Error cancelling RSVP:", err)
-      alert("Failed to cancel RSVP. Please try again.")
-    }
+  // Handler for optimistic capacity updates
+  const handleCapacityChange = (delta: number) => {
+    setGame((prevGame) => {
+      if (!prevGame) return null
+      return {
+        ...prevGame,
+        current_capacity: Math.max(0, prevGame.current_capacity + delta)
+      }
+    })
   }
 
   if (loading) {
@@ -169,8 +148,7 @@ function GameDetailPage() {
                   </div>
                   <div>
                     <h3 className="mb-1 text-sm font-semibold opacity-70">🗓️ Date & Time</h3>
-                    <p className="text-lg">{formatLongDate(game.scheduled_at, userTimezone)}</p>
-                    <p className="text-lg">{formatGameTime(game.scheduled_at, userTimezone)}</p>
+                    <FormattedDatetime datetime={game.scheduled_at} className="text-lg" />
                   </div>
                   <div>
                     <h3 className="mb-1 text-sm font-semibold opacity-70">👥 Capacity</h3>
@@ -182,12 +160,6 @@ function GameDetailPage() {
                       value={game.current_capacity}
                       max={game.max_capacity}
                     />
-                  </div>
-                  <div>
-                    <h3 className="mb-1 text-sm font-semibold opacity-70">✨ Available Spots</h3>
-                    <p className={`text-2xl font-bold ${isFull ? "text-error" : "text-success"}`}>
-                      {isFull ? "None" : spotsRemaining}
-                    </p>
                   </div>
                 </div>
 
@@ -201,10 +173,9 @@ function GameDetailPage() {
                   </>
                 )}
 
-                {/* RSVP Button */}
-                <div className="card-actions mt-6 justify-end">
-                  {/*TODO: replace with the real user ID from auth context */}
-                  {game.organizer_id === 1 ? (
+                {/* Organizer Actions */}
+                {game.organizer_id === 1 && (
+                  <div className="card-actions mt-6 justify-end">
                     <div className="flex w-full justify-end gap-2">
                       <button className="btn btn-error" onClick={() => handleDeleteGame(game.id)}>
                         Delete Game
@@ -216,72 +187,33 @@ function GameDetailPage() {
                         Edit Game
                       </button>
                     </div>
-                  ) : (
-                    // check if they're already RSVP'd
-                    (() => {
-                      const currentUserId = 1 // TODO: replcae with real user ID
-                      const userRsvp = rsvps.find((rsvp) => rsvp.user_id === currentUserId)
-
-                      return userRsvp ? (
-                        <button
-                          className="btn btn-error btn-lg"
-                          onClick={() => handleCancelRSVP(userRsvp.id)}
-                        >
-                          Cancel RSVP
-                        </button>
-                      ) : (
-                        // user hasn't RSVP'd - show the button to do so
-                        <button
-                          className="btn btn-primary btn-lg"
-                          disabled={isFull}
-                          onClick={handleRSVP}
-                        >
-                          {isFull ? "Game is Full" : "RSVP to this Game"}
-                        </button>
-                      )
-                    })()
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Attendees Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Attendees ({rsvps.length})</h2>
-
-                {rsvps.length === 0 ? (
-                  <p className="text-sm opacity-70">No RSVPs yet. Be the first!</p>
-                ) : (
-                  <ul className="space-y-2">
-                    {rsvps.map((rsvp) => (
-                      <li
-                        key={rsvp.id}
-                        className="hover:bg-base-200 flex items-center gap-3 rounded-lg p-2"
-                      >
-                        {/* Avatar */}
-                        <div className="avatar placeholder">
-                          <div className="bg-neutral text-neutral-content w-10 rounded-full">
-                            <span className="text-sm">{rsvp.user_name?.charAt(0) || "?"}</span>
-                          </div>
-                        </div>
-                        {/* User Info */}
-                        <div className="flex-1">
-                          <p className="font-semibold">{rsvp.user_name || "Unknown"}</p>
-                          <p className="text-xs opacity-70">
-                            {rsvp.status === "confirmed" && "Confirmed"}
-                            {rsvp.status === "waitlisted" && "Waitlisted"}
-                            {rsvp.status === "rejected" && "Rejected"}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+          {/* RSVP & Attendees Sidebar */}
+          <div className="space-y-6 lg:col-span-1">
+            {/* RSVP Actions */}
+            {game.organizer_id !== 1 && (
+              <div className="card bg-base-100 shadow-xl">
+                <div className="card-body">
+                  <h3 className="card-title text-lg">Your RSVP</h3>
+                  <RSVPButton
+                    gameId={game.id}
+                    userId={1}
+                    currentRsvp={rsvps.find((rsvp) => rsvp.user_id === 1)}
+                    isFull={isFull}
+                    onRsvpChange={handleRsvpChange}
+                    onCapacityChange={handleCapacityChange}
+                  />
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Attendees List */}
+            <AttendeeList rsvps={rsvps} />
           </div>
         </div>
       </div>
