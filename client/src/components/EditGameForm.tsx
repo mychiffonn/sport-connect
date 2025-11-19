@@ -70,7 +70,8 @@ function EditGameForm() {
     }
 
     // Combine date and time into ISO timestamp format
-    const scheduled_at = `${dateStr}T${timeStr}:00`
+    // const scheduled_at = `${dateStr}T${timeStr}:00`
+    const scheduled_at = localDateTime.toISOString()
 
     // Build updates object
     const updates = {
