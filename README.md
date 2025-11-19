@@ -8,16 +8,6 @@
 
 ---
 
-## 📑 Table of Contents
-
-- [About](#about)
-- [Features](#features)
-- [Installation Instructions](#installation-instructions)
-- [Available Scripts](#available-scripts)
-- [Recommended Project Structure](#recommended-project-structure)
-
----
-
 ## About
 
 ### Description and Purpose
@@ -30,86 +20,105 @@ For many, trying to make new friends in your area can be difficult, especially w
 
 ## Features
 
-### View all available games
+### 0. User Authentication
 
-First feature will allow the user to view all the available games
+There are three options to sign up or log in:
+
+- GitHub,
+- Google,
+- Email and Password.
+
+This allows users to easily create an account and start using the website.
+
+Features marked with [PROTECTED] require the user to be logged in to access them.
+
+### 1. View all available games
+
+Users can view all the available sport games
 
 ![CanViewAllGames](https://github.com/user-attachments/assets/9110c3a5-2df7-4a72-9f23-33f95971ec60)
 
+### 2. Create a new game [PROTECTED]
 
-### Create a new game
+Users can create a new sport game event. It will be validated so that they cannot create an event with invalid data. For example:
 
-Second feature will allow the user to create a new recreational game event. It will be validated
+- past date,
+- missing fields (e.g. no location, no time, etc.)
+- capacity less than 2 people
 
 ![CreateNewGame](https://github.com/user-attachments/assets/d18c2cc3-f5dc-4797-a647-1c916364935c)
 
+### 3. Update game details (time, location, activity) [PROTECTED]
 
-### Update game details (time, location, activity)
+Logged in users can edit the details of a game they created. This includes changing the time, location, and activity of the game. The form will be pre-filled with the current details of the game for easy editing.
 
-Third feature will allow the user to make any changes in regards to the event such as time, location, activity
+They CANNOT reduce the capacity of the game to less than the number of attendees already RSVP'd to the game.
 
 ![EditGameDetails](https://github.com/user-attachments/assets/1a34954c-4925-4ab7-824a-fa815870a91c)
 
+### 4. Delete a game [PROTECTED]
 
-### Delete a game
-
-Fourth feature will allow the user to delete a game
+Logged in users can delete a game they created.
 
 ![DeleteGame](https://github.com/user-attachments/assets/39571047-af89-488f-b9bc-1f0ad3858ad8)
 
-
-### View game attendees
+### 5. View game attendees
 
 Under the events description, users can check who the attendees are
 
 ![ViewParti](https://github.com/user-attachments/assets/9cba258b-1cd0-4c00-bb81-e56939d5dd0c)
 
+### 6. RSVP to a Game [PROTECTED]
 
-### RSVP to a Game
+Logged-in, non-host users can RSVP to a game they are interested in attending. They can select from three options: "Going", "Maybe", or "Not Going".
 
-Users can RSVP to an event they see, given the availability
+The number of attendees will be updated in real-time as users RSVP as 'Going' or 'Not Going'. If the game is full, users will not be able to RSVP.
 
 ![UpdateRSVP](https://github.com/user-attachments/assets/6ca8f2af-c316-4bf2-86d3-ac47641e24d3)
 
-
-### Update RSVP status
+### 7. Update RSVP status [PROTECTED]
 
 The user can update their RSVP status for an event they have already RSVP'd to. Options: "Going", "Maybe", "Not Going"
 
 **Same as RSVP to a Game GIF**
 
-
-### Ability to cancel RSVP
+### 8. Cancel RSVP [PROTECTED]
 
 Users can delete an event or undo their RSVP to an event
 
 **Same as RSVP to a Game GIF**
 
+### 9. Prevent RVSP
 
-### Filter
+Users cannot RSVP to a game if
+
+- the number of attendees has reached the maximum capacity. RSVP buttons are disabled
+- the game date has already passed. RSVP buttons are disabled
+- they have already RSVP'd to the game
+- they are the host of the game
+
+This is a custom feature for: Data submitted via a POST or PATCH request is validated before the database is updated
+
+![PreventRSVPIfFull](https://github.com/user-attachments/assets/e9d6bf1a-ca41-4783-9a48-995429a70fa3)
+
+### 10. Filter games
 
 Users can filter games by sport type, location, date.
 
 This is a custom feature for: The user can filter or sort items based on particular criteria as appropriate for your use case.
-(https://github.com/user-attachments/assets/31220c9d-d04b-4ed1-823a-6f06501617c4)
 
-
-### Prevent RVSP if the game is full
-
-Validate game date is in future, prevent RSVP if game is full
-
-This is a custom feature for: Data submitted via a POST or PATCH request is validated before the database is updated
-![PreventRSVPIfFull](https://github.com/user-attachments/assets/e9d6bf1a-ca41-4783-9a48-995429a70fa3)
-
+![Game Filter](https://github.com/user-attachments/assets/31220c9d-d04b-4ed1-823a-6f06501617c4)
 
 ## Installation Instructions
-
 
 ### Prerequisites
 
 - Node.js (v20 or higher)
 - pnpm (v10 or higher) - Install with `npm install -g pnpm` (or use npm/yarn)
-- PostgreSQL database, will be hosted on Render for deployment
+- Prepare `.env` with the same variables as `.env.example`
+  - PostgreSQL database credentials from Render or your local setup
+  - GitHub and Google OAuth credentials. Follow this [guide](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps) to create a GitHub OAuth app and get the client ID and secret. Follow this [guide](https://support.google.com/cloud/answer/15549257?hl=en) to create a Google OAuth app and get the client ID and secret.
+  - ⚠️ Note that you might have to create two separate Github OAuth apps for development and production environments, as the homepage and callback URLs will differ.
 
 ### Setup
 
@@ -142,11 +151,12 @@ This is a custom feature for: Data submitted via a POST or PATCH request is vali
 
 ### Available Scripts
 
+See [package.json](./package.json) for all available scripts. Key commands include:
+
 - `pnpm dev` - Start both client and server in development mode (uses concurrently)
 - `pnpm dev:client` - Start only the client dev server
 - `pnpm dev:server` - Start only the server in watch mode
 - `pnpm build` - Build the client for production
-- `pnpm build:server` - Build server TypeScript to JavaScript
 - `pnpm start` - Start the server in production mode
 - `pnpm reset` - Reset and seed the database
 - `pnpm lint` - Run ESLint on entire codebase
@@ -154,7 +164,7 @@ This is a custom feature for: Data submitted via a POST or PATCH request is vali
 - `pnpm format` - Format all files with Prettier
 - `pnpm format:check` - Check if files are formatted correctly
 
-### Recommended Project Structure
+### Project Structure
 
 ```
 sport-connect/
@@ -165,19 +175,19 @@ sport-connect/
   │   │   │   ├── games/          # GameList, GameCard, CreateGame
   │   │   │   ├── rsvps/          # RSVPButton, RSVPList
   │   │   │   └── common/         # Navbar, Footer, etc.
+  |   |   ├── layouts/            # Layout with navbar, footer, transition
   │   │   ├── pages/              # Home, GameDetail, Profile, etc.
   │   │   ├── services/
   │   │   │   └── api.ts          # Axios/fetch wrapper
-  │   │   ├── lib/
-  │   │   │   └── auth.ts         # BetterAuth client
-  │   │   ├── types/              # Client-specific types
+  │   │   ├── utils/              # Helper functions (date, auth, etc.)
+  │   │   ├── contexts/           # AuthContext
+  │   │   ├── constants/          # Constants like sport types
   │   │   └── App.tsx
   │   └── vite.config.ts
   ├── server/
   │   ├── lib/
   │   │   └── auth.ts             # BetterAuth server setup
   │   ├── routes/
-  │   │   ├── auth.ts             # BetterAuth routes
   │   │   ├── games.ts
   │   │   ├── rsvps.ts
   │   │   └── users.ts            # User profile routes
@@ -189,7 +199,7 @@ sport-connect/
   │   │   ├── pool.ts
   │   │   ├── schema.sql
   │   │   └── seed.sql
-  │   ├── types.d.ts                # Endpoint types (e.g., game, rsvp)
+  │   ├── types.d.ts              # Endpoint types (e.g., game, rsvp)
   │   └── server.ts
   └── package.json
 ```
