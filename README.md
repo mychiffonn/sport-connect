@@ -4,7 +4,7 @@
 
 **Designed and developed by:** Emanuel Pimentel, My "Chiffon" Nguyen
 
-🔗 **Deployed App:** Coming soon!
+🔗 **Deployed App:** (https://sport-connect-ccmg.onrender.com/)
 
 ---
 
