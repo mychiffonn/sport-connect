@@ -3,13 +3,23 @@ import { Pool } from "pg"
 
 const connectionString = `postgresql://${process.env.PGUSER}:${process.env.PGPASSWORD}@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`
 
+const getTrustedOrigins = (): string[] => {
+  const origins = ["http://localhost:5173"]
+
+  if (process.env.CLIENT_URL) {
+    origins.push(process.env.CLIENT_URL)
+  }
+
+  return origins
+}
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   database: new Pool({
     connectionString,
     ssl: process.env.PGHOST?.includes("render.com") ? { rejectUnauthorized: false } : undefined
   }),
-  trustedOrigins: ["http://localhost:5173"],
+  trustedOrigins: getTrustedOrigins(),
   emailAndPassword: {
     enabled: true
   },
