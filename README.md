@@ -34,55 +34,56 @@ For many, trying to make new friends in your area can be difficult, especially w
 
 First feature will allow the user to view all the available games
 
-[gif goes here]![CanViewAllGames](https://github.com/user-attachments/assets/9110c3a5-2df7-4a72-9f23-33f95971ec60)
+![CanViewAllGames](https://github.com/user-attachments/assets/9110c3a5-2df7-4a72-9f23-33f95971ec60)
 
 
 ### Create a new game
 
 Second feature will allow the user to create a new recreational game event. It will be validated
 
-[gif goes here]![CreateNewGame](https://github.com/user-attachments/assets/d18c2cc3-f5dc-4797-a647-1c916364935c)
+![CreateNewGame](https://github.com/user-attachments/assets/d18c2cc3-f5dc-4797-a647-1c916364935c)
 
 
 ### Update game details (time, location, activity)
 
 Third feature will allow the user to make any changes in regards to the event such as time, location, activity
 
-[gif goes here]![EditGameDetails](https://github.com/user-attachments/assets/1a34954c-4925-4ab7-824a-fa815870a91c)
+![EditGameDetails](https://github.com/user-attachments/assets/1a34954c-4925-4ab7-824a-fa815870a91c)
 
 
 ### Delete a game
 
 Fourth feature will allow the user to delete a game
 
-[gif goes here]![DeleteGame](https://github.com/user-attachments/assets/39571047-af89-488f-b9bc-1f0ad3858ad8)
+![DeleteGame](https://github.com/user-attachments/assets/39571047-af89-488f-b9bc-1f0ad3858ad8)
 
 
 ### View game attendees
 
 Under the events description, users can check who the attendees are
 
-[gif goes here]![ViewParti](https://github.com/user-attachments/assets/9cba258b-1cd0-4c00-bb81-e56939d5dd0c)
+![ViewParti](https://github.com/user-attachments/assets/9cba258b-1cd0-4c00-bb81-e56939d5dd0c)
 
 
 ### RSVP to a Game
 
 Users can RSVP to an event they see, given the availability
 
-[gif goes here]
+![UpdateRSVP](https://github.com/user-attachments/assets/6ca8f2af-c316-4bf2-86d3-ac47641e24d3)
+
 
 ### Update RSVP status
 
 The user can update their RSVP status for an event they have already RSVP'd to. Options: "Going", "Maybe", "Not Going"
 
-[gif goes here]![UpdateRSVP](https://github.com/user-attachments/assets/be8c0b69-c44c-476b-9700-d6d7b9b2c13a)
+![UpdateRSVP](https://github.com/user-attachments/assets/be8c0b69-c44c-476b-9700-d6d7b9b2c13a)
 
 
 ### Ability to cancel RSVP
 
 Users can delete an event or undo their RSVP to an event
 
-[gif goes here]![UpdateRSVP](https://github.com/user-attachments/assets/8fdd3481-49ee-4ee8-80e5-0178e288710d)
+![UpdateRSVP](https://github.com/user-attachments/assets/8fdd3481-49ee-4ee8-80e5-0178e288710d)
 
 
 ### Filter
@@ -90,7 +91,7 @@ Users can delete an event or undo their RSVP to an event
 Users can filter games by sport type, location, date.
 
 This is a custom feature for: The user can filter or sort items based on particular criteria as appropriate for your use case.
-![FilterQuery](https://github.com/user-attachments/assets/31220c9d-d04b-4ed1-823a-6f06501617c4)
+(https://github.com/user-attachments/assets/31220c9d-d04b-4ed1-823a-6f06501617c4)
 
 ### Prevent RVSP if the game is full
 
