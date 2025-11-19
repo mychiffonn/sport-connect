@@ -116,6 +116,11 @@ export const createGame = async (req: Request, res: Response): Promise<void> => 
       return
     }
 
+    if (description && description.length > 1000) {
+      res.status(400).json({ error: "Description  must be 1000 characters or less" })
+      return
+    }
+
     const result = await pool.query(
       `INSERT INTO games (title, sport_type, location, scheduled_at, timezone, max_capacity, current_capacity, description, organizer_id)
        VALUES ($1, $2, $3, $4, $5, $6, 0, $7, $8)
@@ -166,24 +171,6 @@ export const updateGame = async (req: Request, res: Response): Promise<void> => 
       params.push(location)
       paramCount++
     }
-    /*
-    if (scheduled_at !== undefined && timezone !== undefined) {
-      updates.push(`scheduled_at = $${paramCount} AT TIME ZONE $${paramCount + 1}`)
-      params.push(scheduled_at, timezone)
-      paramCount += 2
-      updates.push(`timezone = $${paramCount}`)
-      params.push(timezone)
-      paramCount++
-    } else if (scheduled_at !== undefined) {
-      updates.push(`scheduled_at = $${paramCount}`)
-      params.push(scheduled_at)
-      paramCount++
-    } else if (timezone !== undefined) {
-      updates.push(`timezone = $${paramCount}`)
-      params.push(timezone)
-      paramCount++
-    }
-*/
 
     if (scheduled_at !== undefined) {
       updates.push(`scheduled_at = $${paramCount}`)
@@ -211,6 +198,11 @@ export const updateGame = async (req: Request, res: Response): Promise<void> => 
 
     if (updates.length === 0) {
       res.status(400).json({ error: "No fields to update" })
+      return
+    }
+
+    if (description !== undefined && description && description.length > 1000) {
+      res.status(400).json({ error: "Description  must be 1000 characters or less" })
       return
     }
 

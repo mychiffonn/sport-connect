@@ -26,7 +26,7 @@ const createTablesQuery = `
     timezone VARCHAR(100) NOT NULL,
     max_capacity INTEGER NOT NULL,
     current_capacity INTEGER DEFAULT 0,
-    description TEXT,
+    description VARCHAR(1000),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (organizer_id) REFERENCES "user"(id) ON DELETE CASCADE,

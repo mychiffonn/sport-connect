@@ -4,3 +4,8 @@
     cupcake --default,
     forest --prefersdark;
 }
+
+body {
+  overflow-wrap: break-word;
+  overflow-x: hidden;
+}

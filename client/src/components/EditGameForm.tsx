@@ -114,7 +114,9 @@ function EditGameForm() {
       await api.updateGame(Number(id), updates)
       navigate(`/games/${id}`)
     } catch (err) {
-      setError("Failed to update game. Please try again.")
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update game. Please try again."
+      setError(errorMessage)
       console.error("Error updating game:", err)
     } finally {
       setSaving(false)

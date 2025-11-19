@@ -20,10 +20,6 @@ function GameCard({ game, currentUserId }: GameCardProps) {
       <div className="card-body">
         <h2 className="card-title">
           <span className="flex-1 truncate">{game.title}</span>
-          <div className="badge badge-secondary whitespace-nowrap">{game.sport_type}</div>
-          {isOrganizer && (
-            <div className="badge badge-accent whitespace-nowrap">You're Hosting</div>
-          )}
         </h2>
         {/* location */}
         <p className="text-sm opacity-70">{game.location}</p>
@@ -31,8 +27,15 @@ function GameCard({ game, currentUserId }: GameCardProps) {
         {/*date and time*/}
         <FormattedDatetime datetime={game.scheduled_at} variant="short" className="text-sm" />
 
+        <div className="flex gap-2">
+          <div className="badge badge-secondary whitespace-nowrap">{game.sport_type}</div>
+          {isOrganizer && (
+            <div className="badge badge-accent whitespace-nowrap">You're Hosting</div>
+          )}
+        </div>
+
         {/* description*/}
-        {game.description && <p className="mt-2 text-sm">{game.description}</p>}
+        {game.description && <p className="mt-2 line-clamp-3 text-sm">{game.description}</p>}
 
         {/*capacity*/}
         <div className="mt-4">
