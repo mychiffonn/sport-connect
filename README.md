@@ -52,7 +52,11 @@ Users can create a new sport game event. It will be validated so that they canno
 
 Logged in users can edit the details of a game they created. This includes changing the time, location, and activity of the game. The form will be pre-filled with the current details of the game for easy editing.
 
-They CANNOT reduce the capacity of the game to less than the number of attendees already RSVP'd to the game.
+They CANNOT
+
+- reduce the capacity of the game to less than the number of attendees already RSVP'd to the game.
+- change the date to a past date
+- remove required fields
 
 ![EditGameDetails](https://github.com/user-attachments/assets/1a34954c-4925-4ab7-824a-fa815870a91c)
 
@@ -72,7 +76,7 @@ Under the events description, users can check who the attendees are
 
 Logged-in, non-host users can RSVP to a game they are interested in attending. They can select from three options: "Going", "Maybe", or "Not Going".
 
-The number of attendees will be updated in real-time as users RSVP as 'Going' or 'Not Going'. If the game is full, users will not be able to RSVP.
+The number of attendees will be updated in real-time as users RSVP as 'Going' or 'Not Going'.
 
 ![UpdateRSVP](https://github.com/user-attachments/assets/6ca8f2af-c316-4bf2-86d3-ac47641e24d3)
 
@@ -109,6 +113,12 @@ This is a custom feature for: The user can filter or sort items based on particu
 
 ![Game Filter](https://github.com/user-attachments/assets/31220c9d-d04b-4ed1-823a-6f06501617c4)
 
+### 11. View my games [PROTECTED]
+
+Logged-in users can view a list of games they hosted, upcoming and past games.
+
+![ViewMyGames](https://i.imgur.com/N5bUM9i.png)
+
 ## Installation Instructions
 
 ### Prerequisites
@@ -117,6 +127,7 @@ This is a custom feature for: The user can filter or sort items based on particu
 - pnpm (v10 or higher) - Install with `npm install -g pnpm` (or use npm/yarn)
 - Prepare `.env` with the same variables as `.env.example`
   - PostgreSQL database credentials from Render or your local setup
+  - BetterAuth secret key. Generate one with `openssl rand -base64 32` or go to [BetterAuth guide](https://www.better-auth.com/docs/installation#set-environment-variables)
   - GitHub and Google OAuth credentials. Follow this [guide](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps) to create a GitHub OAuth app and get the client ID and secret. Follow this [guide](https://support.google.com/cloud/answer/15549257?hl=en) to create a Google OAuth app and get the client ID and secret.
   - ⚠️ Note that you might have to create two separate Github OAuth apps for development and production environments, as the homepage and callback URLs will differ.
 
