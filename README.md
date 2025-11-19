@@ -76,14 +76,14 @@ Users can RSVP to an event they see, given the availability
 
 The user can update their RSVP status for an event they have already RSVP'd to. Options: "Going", "Maybe", "Not Going"
 
-![UpdateRSVP](https://github.com/user-attachments/assets/be8c0b69-c44c-476b-9700-d6d7b9b2c13a)
+**Same as RSVP to a Game GIF**
 
 
 ### Ability to cancel RSVP
 
 Users can delete an event or undo their RSVP to an event
 
-![UpdateRSVP](https://github.com/user-attachments/assets/8fdd3481-49ee-4ee8-80e5-0178e288710d)
+**Same as RSVP to a Game GIF**
 
 
 ### Filter
@@ -93,6 +93,7 @@ Users can filter games by sport type, location, date.
 This is a custom feature for: The user can filter or sort items based on particular criteria as appropriate for your use case.
 (https://github.com/user-attachments/assets/31220c9d-d04b-4ed1-823a-6f06501617c4)
 
+
 ### Prevent RVSP if the game is full
 
 Validate game date is in future, prevent RSVP if game is full
@@ -100,7 +101,9 @@ Validate game date is in future, prevent RSVP if game is full
 This is a custom feature for: Data submitted via a POST or PATCH request is validated before the database is updated
 ![PreventRSVPIfFull](https://github.com/user-attachments/assets/e9d6bf1a-ca41-4783-9a48-995429a70fa3)
 
+
 ## Installation Instructions
+
 
 ### Prerequisites
 
