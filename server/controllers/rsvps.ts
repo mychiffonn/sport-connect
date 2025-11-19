@@ -278,18 +278,30 @@ export const deleteRSVP = async (req: Request, res: Response): Promise<void> => 
       return
     }
 
-    // Delete RSVP
-    await pool.query("DELETE FROM rsvps WHERE id = $1", [id])
+    // Use transaction to ensure RSVP deletion and capacity update happen atomically
+    const client = await pool.connect()
+    try {
+      await client.query("BEGIN")
 
-    // Update game current_capacity if RSVP was going
-    if (rsvp.status === "going") {
-      await pool.query(
-        "UPDATE games SET current_capacity = GREATEST(0, current_capacity - 1) WHERE id = $1",
-        [rsvp.game_id]
-      )
+      await client.query("DELETE FROM rsvps WHERE id = $1", [id])
+
+      // Update game current_capacity if RSVP was going
+      if (rsvp.status === "going") {
+        await client.query(
+          "UPDATE games SET current_capacity = GREATEST(0, current_capacity - 1) WHERE id = $1",
+          [rsvp.game_id]
+        )
+      }
+
+      await client.query("COMMIT")
+
+      res.status(200).json({ message: "RSVP cancelled successfully", rsvp })
+    } catch (txError) {
+      await client.query("ROLLBACK")
+      throw txError
+    } finally {
+      client.release()
     }
-
-    res.status(200).json({ message: "RSVP cancelled successfully", rsvp })
   } catch (error) {
     console.error("Error deleting RSVP:", error)
     res.status(500).json({ error: "Failed to delete RSVP" })
