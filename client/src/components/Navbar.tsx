@@ -77,7 +77,7 @@ function Navbar() {
               <li>
                 <Link to="/my-games">
                   <Calendar className="h-4 w-4" />
-                  Your Events
+                  My Games
                 </Link>
               </li>
               <li>
