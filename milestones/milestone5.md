@@ -82,6 +82,7 @@ Complete the checklist below detailing each baseline, custom, and stretch featur
 
 🔗 [Here's a GIF walkthrough of the final project](👉🏾👉🏾👉🏾 your link here)
 ![DatabaseGif](https://github.com/user-attachments/assets/3ad5f54a-6f1c-4729-ad32-d69622d0ea12)
+https://github.com/mychiffonn/sport-connect/tree/main
 **THE REST OF THE GIFS ARE ALL SEEN WITHIN THE UPMOST README**
 
 
